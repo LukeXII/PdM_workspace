@@ -94,7 +94,7 @@ int main(void)
 			}
 
 			if(!(LEDCount % 5))
-				BSP_LED_Toggle(LED2);
+				SP_LED_Toggle(LED2);
 
 
 		}
@@ -112,9 +112,9 @@ bool_t delayRead( delay_t * delay )
 {
 	bool timeReached = false;
 
-	if(delay->running)
+	if(delay->running)	// Si el delay esta corriendo, pregunto si ya paso el tiempo
 	{
-		if((HAL_GetTick() - delay->startTime) >= delay->duration)
+		if((HAL_GetTick() - delay->startTime) >= delay->duration)	// Si ya paso el tiempo, guardo el timestamp
 		{
 			timeReached = true;
 			delay->startTime = HAL_GetTick();
