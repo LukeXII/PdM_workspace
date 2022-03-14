@@ -16,7 +16,6 @@ RM := rm -rf
 -include Drivers/Core/Src/subdir.mk
 -include Drivers/CMSIS/subdir.mk
 -include Drivers/BSP/STM32F4xx_Nucleo_144/subdir.mk
--include subdir.mk
 -include objects.mk
 
 ifneq ($(MAKECMDGOALS),clean)
@@ -65,8 +64,8 @@ all: main-build
 main-build: Ejercicio_delayNB_1.elf secondary-outputs
 
 # Tool invocations
-Ejercicio_delayNB_1.elf: $(OBJS) $(USER_OBJS) /home/pato/Embebidos/CESE/PdM_workspace/Ejercicio_delayNB_1/STM32F429ZITX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
-	arm-none-eabi-gcc -o "Ejercicio_delayNB_1.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m4 -T"/home/pato/Embebidos/CESE/PdM_workspace/Ejercicio_delayNB_1/STM32F429ZITX_FLASH.ld" --specs=nosys.specs -Wl,-Map="Ejercicio_delayNB_1.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+Ejercicio_delayNB_1.elf: $(OBJS) $(USER_OBJS) /home/lucas/Desktop/Repo/PdM_workspace/Ejercicio_delayNB_1/STM32F429ZITX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
+	arm-none-eabi-gcc -o "Ejercicio_delayNB_1.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m4 -T"/home/lucas/Desktop/Repo/PdM_workspace/Ejercicio_delayNB_1/STM32F429ZITX_FLASH.ld" --specs=nosys.specs -Wl,-Map="Ejercicio_delayNB_1.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
 	@echo 'Finished building target: $@'
 	@echo ' '
 
@@ -87,7 +86,7 @@ Ejercicio_delayNB_1.bin: $(EXECUTABLES) makefile objects.list $(OPTIONAL_TOOL_DE
 
 # Other Targets
 clean:
-	-$(RM) $(SIZE_OUTPUT)$(OBJDUMP_LIST)$(EXECUTABLES)$(OBJS)$(S_DEPS)$(S_UPPER_DEPS)$(C_DEPS)$(OBJCOPY_BIN) Ejercicio_delayNB_1.elf
+	-$(RM) Ejercicio_delayNB_1.bin Ejercicio_delayNB_1.elf Ejercicio_delayNB_1.list default.size.stdout
 	-@echo ' '
 
 secondary-outputs: $(SIZE_OUTPUT) $(OBJDUMP_LIST) $(OBJCOPY_BIN)
@@ -99,6 +98,6 @@ fail-specified-linker-script-missing:
 warn-no-linker-script-specified:
 	@echo 'Warning: No linker script specified. Check the linker settings in the build configuration.'
 
-.PHONY: all clean dependents fail-specified-linker-script-missing warn-no-linker-script-specified
+.PHONY: all clean dependents main-build fail-specified-linker-script-missing warn-no-linker-script-specified
 
 -include ../makefile.targets
