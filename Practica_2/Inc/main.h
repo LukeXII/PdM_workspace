@@ -31,8 +31,10 @@
 
 /* Exported types ------------------------------------------------------------*/
 
+// Delay API types
+
 typedef uint32_t tick_t; 	//
-typedef bool bool_t;      	// stdbool.h
+typedef bool bool_t;      	// Incluida stdbool.h
 typedef struct
 {
    tick_t startTime;
@@ -62,6 +64,8 @@ typedef struct
 
 /* Exported macro ------------------------------------------------------------*/
 /* Exported functions ------------------------------------------------------- */
+
+// Delay API
 
 void delayInit( delay_t * delay, tick_t duration );
 bool_t delayRead( delay_t * delay );

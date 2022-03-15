@@ -31,9 +31,12 @@
 
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
+
+// Duracion de cada delay
 #define COUNT_LED1 100
 #define COUNT_LED2 500
 #define COUNT_LED3 1000
+
 /* Private macro -------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
 /* UART handler declaration */
@@ -68,69 +71,78 @@ int main(void)
 	/* Configure the system clock to 180 MHz */
 	SystemClock_Config();
 
-	/* Initialize BSP Led for LED2 */
-	BSP_LED_Init(LED1);
+	BSP_LED_Init(LED1);						// Inicializacion de todos los LED
 	BSP_LED_Init(LED2);
 	BSP_LED_Init(LED3);
 
-	uint8_t LEDCount = 0;
-	tick_t tickBase = 100;
-	delay_t myDelay;
+	delay_t delay1, delay2, delay3;
 
-	delayInit(&myDelay, tickBase);
+	delayInit(&delay1, COUNT_LED1);			// Inicializacion de todos los delay
+	delayInit(&delay2, COUNT_LED2);
+	delayInit(&delay3, COUNT_LED3);
 
 	/* Infinite loop */
 	while (1)
 	{
-		if(delayRead(&myDelay))
-		{
+		// Verifica si transcurrio el tiempo de cada delay individualmente. En dicho caso, togglea el LED correspondiente
+		if(delayRead(&delay1))
 			BSP_LED_Toggle(LED1);
-			LEDCount++;
 
-			if(!(LEDCount % 10))
-			{
-				BSP_LED_Toggle(LED3);
-				//LEDCount = 0;
-			}
+		if(delayRead(&delay2))
+			BSP_LED_Toggle(LED2);
 
-			if(!(LEDCount % 5))
-				SP_LED_Toggle(LED2);
-
-
-		}
+		if(delayRead(&delay3))
+			BSP_LED_Toggle(LED3);
 
 	}
 }
 
+// Entrada: Puntero al delay y su duracion delay en ms
+// Salida: Ninguna
+// Funcion: Inicializa los parametros internos del delay
 void delayInit( delay_t * delay, tick_t duration )
 {
-	delay->duration = duration;
-	delay->running = false;
+	if((delay != NULL) && (duration > 0))			// Verifica que el puntero sea valido y que la duracion sea un valor positivo y mayor a cero
+	{
+		delay->duration = duration;
+		delay->running = false;						// Inicializa el delay detenido
+	}
 }
 
+// Entrada: Puntero al delay
+// Salida: Bool que indica si ya transcurrio el tiempo del delay o no. True en el primer caso, false en el segundo
+// Funcion: Comprueba si ya transcurrio el tiempo del delay
 bool_t delayRead( delay_t * delay )
 {
 	bool timeReached = false;
 
-	if(delay->running)	// Si el delay esta corriendo, pregunto si ya paso el tiempo
+	if(delay != NULL)
 	{
-		if((HAL_GetTick() - delay->startTime) >= delay->duration)	// Si ya paso el tiempo, guardo el timestamp
+		if(delay->running)							// Si el delay esta corriendo, calcula si ya paso el tiempo
 		{
-			timeReached = true;
-			delay->startTime = HAL_GetTick();
+			if((HAL_GetTick() - delay->startTime) >= delay->duration)		// Si ya paso el tiempo, guarda el timestamp actual
+			{
+				timeReached = true;
+				delay->startTime = HAL_GetTick();
+			}
 		}
-	}
-	else	// Si el delay esta apagado, lo prendo y guardo el timestamp
-	{
-		delay->startTime = HAL_GetTick();
-		delay->running = true;
+		else										// Si el delay esta detenido, lo reanuda y guarda el timestamp actual
+		{
+			delay->startTime = HAL_GetTick();
+			delay->running = true;
+		}
 	}
 
 	return timeReached;
 }
 
+// Entrada: Puntero al delay y su duracion delay en ms
+// Salida: Ninguna
+// Funcion: Cambia la duracion del delay, sin importar si esta corriendo o no
 void delayWrite( delay_t * delay, tick_t duration )
 {
+	if((delay != NULL) && (duration > 0))			// Verifica que el puntero sea valido y que la duracion sea un valor positivo y mayor a cero
+		delay->duration = duration;
 
 }
 
