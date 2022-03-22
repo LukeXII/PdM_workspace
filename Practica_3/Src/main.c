@@ -34,7 +34,8 @@
 /* Private define ------------------------------------------------------------*/
 
 // Duracion de cada delay
-#define COUNT_DELAY 200
+#define COUNT_DELAY 	200
+#define DEBOUNCE_DELAY	20
 
 /* Private macro -------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
@@ -46,7 +47,12 @@ UART_HandleTypeDef UartHandle;
 static void SystemClock_Config(void);
 static void Error_Handler(void);
 
+typedef enum my_LEDs{LED_1, LED_2, LED_3} myLEDs;
+enum secuencias{SEC_1, SEC_2};
+
 /* Private functions ---------------------------------------------------------*/
+
+void turnOnLED(myLEDs activeLED);
 
 /**
  * @brief  Main program
@@ -74,51 +80,90 @@ int main(void)
 	BSP_LED_Init(LED2);
 	BSP_LED_Init(LED3);
 
-	delay_t myDelay;
+	/* Initialize BSP PB for BUTTON_USER */
+	BSP_PB_Init(BUTTON_USER, BUTTON_MODE_GPIO);
 
-	delayInit(&myDelay, COUNT_DELAY);			// Inicializacion deL delay
+	delay_t myDelay, buttonDelay;
 
-	enum myLEDs{LED_1, LED_2, LED_3};
-	enum myLEDs activeLED;
-	activeLED = LED_1;
+	delayInit(&myDelay, COUNT_DELAY);			// Inicializacion del delay
+	delayInit(&buttonDelay, DEBOUNCE_DELAY);			// Inicializacion del delay
+
+
+	enum secuencias secuenciaActiva = SEC_2;
+
+	myLEDs secuencia1[] = {LED_1, LED_2, LED_3};
+	myLEDs secuencia2[] = {LED_1, LED_3, LED_2};
+
+	uint8_t index = 0;
+	bool_t edgeDetected = false;
+	bool_t latched = false;
+
 	/* Infinite loop */
 	while (1)
 	{
 
-		switch(activeLED)
+		if(delayRead(&myDelay))
 		{
-			case LED_1:
-				if(delayRead(&myDelay))
-				{
-					BSP_LED_On(LED1);
-					BSP_LED_Off(LED3);
-					activeLED = LED_2;
-				}
-			break;
+			index = (index == 2) ? 0 : index + 1;
 
-			case LED_2:
-				if(delayRead(&myDelay))
-				{
-					BSP_LED_On(LED2);
-					BSP_LED_Off(LED1);
-					activeLED = LED_3;
-				}
-			break;
+			if(secuenciaActiva == SEC_1)
+				turnOnLED(secuencia1[index]);
+			else
+				turnOnLED(secuencia2[index]);
 
-			case LED_3:
-				if(delayRead(&myDelay))
-				{
-					BSP_LED_On(LED3);
-					BSP_LED_Off(LED2);
-					activeLED = LED_1;
-				}
-			break;
+		}
 
+
+		if(delayRead(&buttonDelay) && edgeDetected)
+		{
+			if(!latched)
+			{
+				secuenciaActiva = (secuenciaActiva == SEC_1) ? SEC_2 : SEC_1;
+				latched = true;
+			}
+		}
+
+		if(BSP_PB_GetState(BUTTON_USER))
+		{
+			if(!edgeDetected)
+			{
+				edgeDetected = true;
+				delayRead(&buttonDelay);
+			}
+		}
+		else
+		{
+			edgeDetected = false;
+			latched = false;
 		}
 
 	}
 }
 
+// Prende el LED correspondiente y apaga los demas
+void turnOnLED(myLEDs activeLED)
+{
+	switch(activeLED)
+	{
+		case LED_1:
+				BSP_LED_On(LED1);
+				BSP_LED_Off(LED3);
+				BSP_LED_Off(LED2);
+		break;
+
+		case LED_2:
+				BSP_LED_On(LED2);
+				BSP_LED_Off(LED1);
+				BSP_LED_Off(LED3);
+		break;
+
+		case LED_3:
+				BSP_LED_On(LED3);
+				BSP_LED_Off(LED2);
+				BSP_LED_Off(LED1);
+		break;
+	}
+}
 
 /**
  * @brief  System Clock Configuration
