@@ -10,6 +10,7 @@
 
 #include <stdio.h>
 #include <stdbool.h>
+#include "stm32f4xx_hal.h"  		/* <- HAL include */
 
 // Delay API types
 
@@ -22,7 +23,7 @@ typedef struct
    bool_t running;
 } delay_t;
 
-// Delay API
+// Delay API functions
 
 void delayInit( delay_t * delay, tick_t duration );
 bool_t delayRead( delay_t * delay );
