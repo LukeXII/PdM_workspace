@@ -31,6 +31,9 @@
  */
 
 /* Private typedef -----------------------------------------------------------*/
+typedef enum my_LEDs{LED_1, LED_2, LED_3} myLEDs;		// Enumeracion de los LEDs
+enum secuencias{SEC_1, SEC_2};							// Enumeracion de las secuencias de prendido
+
 /* Private define ------------------------------------------------------------*/
 
 // Duracion de cada delay
@@ -39,16 +42,15 @@
 
 /* Private macro -------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
+const myLEDs secuencia1[] = {LED_1, LED_2, LED_3};		// Secuencias de encendido de LEDs
+const myLEDs secuencia2[] = {LED_1, LED_3, LED_2};
+
 /* UART handler declaration */
 UART_HandleTypeDef UartHandle;
 
 /* Private function prototypes -----------------------------------------------*/
-
 static void SystemClock_Config(void);
 static void Error_Handler(void);
-
-typedef enum my_LEDs{LED_1, LED_2, LED_3} myLEDs;
-enum secuencias{SEC_1, SEC_2};
 
 /* Private functions ---------------------------------------------------------*/
 
@@ -76,7 +78,7 @@ int main(void)
 	/* Configure the system clock to 180 MHz */
 	SystemClock_Config();
 
-	BSP_LED_Init(LED1);						// Inicializacion de todos los LED
+	BSP_LED_Init(LED1);							// Inicializa todos los LED
 	BSP_LED_Init(LED2);
 	BSP_LED_Init(LED3);
 
@@ -85,28 +87,24 @@ int main(void)
 
 	delay_t myDelay, buttonDelay;
 
-	delayInit(&myDelay, COUNT_DELAY);			// Inicializacion del delay
-	delayInit(&buttonDelay, DEBOUNCE_DELAY);			// Inicializacion del delay
+	delayInit(&myDelay, COUNT_DELAY);			// Inicializa el delay del LED
+	delayInit(&buttonDelay, DEBOUNCE_DELAY);	// Inicializa el delay del antirrebote
 
-
-	enum secuencias secuenciaActiva = SEC_2;
-
-	myLEDs secuencia1[] = {LED_1, LED_2, LED_3};
-	myLEDs secuencia2[] = {LED_1, LED_3, LED_2};
+	enum secuencias secuenciaActiva = SEC_1;	// Inicializa en secuencia 1
 
 	uint8_t index = 0;
-	bool_t edgeDetected = false;
-	bool_t latched = false;
+	bool_t edgeDetected = false;				// Variable que indica si se detecto un flanco ascendente
+	bool_t latched = false;						// Variable que indica si se esta manteniendo apretado el boton
 
 	/* Infinite loop */
 	while (1)
 	{
 
-		if(delayRead(&myDelay))
+		if(delayRead(&myDelay))						// Si transcurrieron los 200 ms se debe prender otro LED
 		{
-			index = (index == 2) ? 0 : index + 1;
+			index = (index == 2) ? 0 : index + 1;	// Avanza el contador de la secuencia de encendido. Si llego al final, vuelve a 0
 
-			if(secuenciaActiva == SEC_1)
+			if(secuenciaActiva == SEC_1)			// Llama a la funcion que prende el LED dependiendo de la secuencia activa
 				turnOnLED(secuencia1[index]);
 			else
 				turnOnLED(secuencia2[index]);
@@ -114,9 +112,9 @@ int main(void)
 		}
 
 
-		if(delayRead(&buttonDelay) && edgeDetected)
+		if(delayRead(&buttonDelay) && edgeDetected && BSP_PB_GetState(BUTTON_USER))			// Si se detecto un flanco, paso el tiempo de antirrebote y el boton sigue apretado, entonces se toma como valido
 		{
-			if(!latched)
+			if(!latched)																	// Si no esta latcheado el boton, entonces se cambia la secuencia y de ahora en mas se considera al boton latcheado
 			{
 				secuenciaActiva = (secuenciaActiva == SEC_1) ? SEC_2 : SEC_1;
 				latched = true;
@@ -125,13 +123,13 @@ int main(void)
 
 		if(BSP_PB_GetState(BUTTON_USER))
 		{
-			if(!edgeDetected)
+			if(!edgeDetected)																// Si se detecta el primer flanco, se dispara el delay antirrebote
 			{
 				edgeDetected = true;
 				delayRead(&buttonDelay);
 			}
 		}
-		else
+		else																				// Si no esta presionado, se elimina el latch y la deteccion de flanco
 		{
 			edgeDetected = false;
 			latched = false;
@@ -139,25 +137,26 @@ int main(void)
 
 	}
 }
-
-// Prende el LED correspondiente y apaga los demas
+// Entradas: LED que debe prenderse
+// Salidas: Ninguna
+// Funcion: Prende el LED correspondiente y apaga los demas
 void turnOnLED(myLEDs activeLED)
 {
 	switch(activeLED)
 	{
-		case LED_1:
+		case LED_1:					// Prende el LED 1 y apaga el 2 y el 3
 				BSP_LED_On(LED1);
 				BSP_LED_Off(LED3);
 				BSP_LED_Off(LED2);
 		break;
 
-		case LED_2:
+		case LED_2:					// Prende el LED 2 y apaga el 1 y el 3
 				BSP_LED_On(LED2);
 				BSP_LED_Off(LED1);
 				BSP_LED_Off(LED3);
 		break;
 
-		case LED_3:
+		case LED_3:					// Prende el LED 3 y apaga el 1 y el 2
 				BSP_LED_On(LED3);
 				BSP_LED_Off(LED2);
 				BSP_LED_Off(LED1);

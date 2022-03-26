@@ -1,10 +1,15 @@
-04:34:48 **** Incremental Build of configuration Debug for project Practica_3 ****
+17:23:07 **** Incremental Build of configuration Debug for project Practica_3 ****
 make -j16 all 
+arm-none-eabi-gcc "../Src/main.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DSTM32 -DSTM32F429ZITx -DSTM32F4 -DNUCLEO_F429ZI -DUSE_HAL_DRIVER -DSTM32F429xx -c -I../Inc -I"C:/Users/theda/Desktop/Repo/PdM_workspace/Practica_3/Drivers/STM32F4xx_HAL_Driver/Inc" -I"C:/Users/theda/Desktop/Repo/PdM_workspace/Practica_3/Drivers/CMSIS/Include" -I"C:/Users/theda/Desktop/Repo/PdM_workspace/Practica_3/Drivers/CMSIS/Device/ST/STM32F4xx/Include" -I"C:/Users/theda/Desktop/Repo/PdM_workspace/Practica_3/Drivers/BSP/STM32F4xx_Nucleo_144" -I"C:/Users/theda/Desktop/Repo/PdM_workspace/Practica_3/Drivers/Core/Inc" -I"C:/Users/theda/Desktop/Repo/PdM_workspace/Practica_3/Drivers/API" -I"C:/Users/theda/Desktop/Repo/PdM_workspace/Practica_3/Drivers/API/src" -I"C:/Users/theda/Desktop/Repo/PdM_workspace/Practica_3/Drivers/API/inc" -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -MMD -MP -MF"Src/main.d" -MT"Src/main.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Src/main.o"
+arm-none-eabi-gcc "../Drivers/API/src/API_delay.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DSTM32 -DSTM32F429ZITx -DSTM32F4 -DNUCLEO_F429ZI -DUSE_HAL_DRIVER -DSTM32F429xx -c -I../Inc -I"C:/Users/theda/Desktop/Repo/PdM_workspace/Practica_3/Drivers/STM32F4xx_HAL_Driver/Inc" -I"C:/Users/theda/Desktop/Repo/PdM_workspace/Practica_3/Drivers/CMSIS/Include" -I"C:/Users/theda/Desktop/Repo/PdM_workspace/Practica_3/Drivers/CMSIS/Device/ST/STM32F4xx/Include" -I"C:/Users/theda/Desktop/Repo/PdM_workspace/Practica_3/Drivers/BSP/STM32F4xx_Nucleo_144" -I"C:/Users/theda/Desktop/Repo/PdM_workspace/Practica_3/Drivers/Core/Inc" -I"C:/Users/theda/Desktop/Repo/PdM_workspace/Practica_3/Drivers/API" -I"C:/Users/theda/Desktop/Repo/PdM_workspace/Practica_3/Drivers/API/src" -I"C:/Users/theda/Desktop/Repo/PdM_workspace/Practica_3/Drivers/API/inc" -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -MMD -MP -MF"Drivers/API/src/API_delay.d" -MT"Drivers/API/src/API_delay.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Drivers/API/src/API_delay.o"
+arm-none-eabi-gcc -o "Practica_3.elf" @"objects.list"   -mcpu=cortex-m4 -T"C:\Users\theda\Desktop\Repo\PdM_workspace\Practica_3\STM32F429ZITX_FLASH.ld" --specs=nosys.specs -Wl,-Map="Practica_3.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+Finished building target: Practica_3.elf
+ 
 arm-none-eabi-size   Practica_3.elf 
    text	   data	    bss	    dec	    hex	filename
-   7008	     36	   1572	   8616	   21a8	Practica_3.elf
+   6928	     36	   1572	   8536	   2158	Practica_3.elf
 Finished building: default.size.stdout
  
 
-04:34:48 Build Finished. 0 errors, 0 warnings. (took 162ms)
+17:23:08 Build Finished. 0 errors, 0 warnings. (took 1s.216ms)
 
