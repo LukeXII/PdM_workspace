@@ -1,0 +1,82 @@
+/*
+ * API_debounce.c
+ *
+ *  Created on: Mar 27, 2022
+ *      Author: Lucas
+ */
+
+static debounceState_t estadoActual;
+
+void debounceFSM_init()
+{
+	estadoActual = BUTTON_UP;
+	delayInit(&buttonDelay, DEBOUNCE_DELAY);			// Inicializacion del delay
+
+}
+
+void debounceFSM_update()
+{
+
+	switch (estadoActual)
+	{
+		case BUTTON_UP:
+		// Actualizar salida del estado
+		// Chequear condiciones de transición de estado
+			if(BSP_PB_GetState(BUTTON_USER))
+			{
+				delayRead(&buttonDelay);
+				estadoActual = BUTTON_FALLING;
+			}
+
+		break;
+
+		case BUTTON_FALLING:
+
+			if(delayRead(&buttonDelay))
+			{
+				if(BSP_PB_GetState(BUTTON_USER))
+				{
+					estadoActual = BUTTON_DOWN;
+					buttonPressed();
+				}
+				else
+					estadoActual = BUTTON_UP;
+			}
+
+		break;
+
+		case BUTTON_DOWN:
+
+			if(!BSP_PB_GetState(BUTTON_USER))
+			{
+				delayRead(&buttonDelay);
+				estadoActual = BUTTON_RISING;
+			}
+
+		break;
+
+		case BUTTON_RISING:
+
+			if(delayRead(&buttonDelay))
+			{
+				if(!BSP_PB_GetState(BUTTON_USER))
+				{
+					estadoActual = BUTTON_UP;
+					buttonReleased();
+				}
+				else
+					estadoActual = BUTTON_DOWN;
+			}
+
+
+		break;
+
+		default:
+			//Si algo modificó la variable estadoActual a un estado no válido llevo la MEF a un lugar seguro, por ejemplo, la reinicio:
+			//controlDeErrores();
+			debounceFSM_init();
+
+		break;
+	}
+
+}
