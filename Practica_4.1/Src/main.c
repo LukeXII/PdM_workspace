@@ -55,8 +55,9 @@ typedef enum{
 
 /* Private functions ---------------------------------------------------------*/
 
-// Variable de estado (global)
+// Variables globales
 debounceState_t estadoActual;
+delay_t buttonDelay;
 
 // Prototipos de funciones
 void inicializarMEF(void);
@@ -110,14 +111,12 @@ int main(void)
 void debounceFSM_init()
 {
 	estadoActual = BUTTON_UP;
-	    // Resto de la inicializaciones
+	delayInit(&buttonDelay, DEBOUNCE_DELAY);			// Inicializacion del delay
+
 }
 
 void debounceFSM_update()
 {
-	static delay_t buttonDelay;
-
-	//delayInit(&buttonDelay, DEBOUNCE_DELAY);			// Inicializacion del delay
 
 	switch (estadoActual)
 	{
@@ -126,7 +125,6 @@ void debounceFSM_update()
 		// Chequear condiciones de transición de estado
 			if(BSP_PB_GetState(BUTTON_USER))
 			{
-				// Cambiar a otro estado
 				delayRead(&buttonDelay);
 				estadoActual = BUTTON_FALLING;
 			}
@@ -137,35 +135,45 @@ void debounceFSM_update()
 
 			if(delayRead(&buttonDelay))
 			{
-				estadoActual = BUTTON_DOWN;
-				buttonPressed();
+				if(BSP_PB_GetState(BUTTON_USER))
+				{
+					estadoActual = BUTTON_DOWN;
+					buttonPressed();
+				}
+				else
+					estadoActual = BUTTON_UP;
 			}
-			else
-				estadoActual = BUTTON_UP;
 
 		break;
 
 		case BUTTON_DOWN:
 
-			estadoActual = BUTTON_RISING;
+			if(!BSP_PB_GetState(BUTTON_USER))
+			{
+				delayRead(&buttonDelay);
+				estadoActual = BUTTON_RISING;
+			}
+
 		break;
 
 		case BUTTON_RISING:
 
 			if(delayRead(&buttonDelay))
 			{
-				estadoActual = BUTTON_UP;
-				buttonReleased();
+				if(!BSP_PB_GetState(BUTTON_USER))
+				{
+					estadoActual = BUTTON_UP;
+					buttonReleased();
+				}
+				else
+					estadoActual = BUTTON_DOWN;
 			}
-			else
-				estadoActual = BUTTON_DOWN;
+
 
 		break;
 
 		default:
-			//Si algo modificó la variable estadoActual
-			// a un estado no válido llevo la MEF a un
-			// lugar seguro, por ejemplo, la reinicio:
+			//Si algo modificó la variable estadoActual a un estado no válido llevo la MEF a un lugar seguro, por ejemplo, la reinicio:
 			//controlDeErrores();
 			debounceFSM_init();
 
