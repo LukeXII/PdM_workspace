@@ -20,7 +20,7 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
-#include "API_delay.h"
+//#include "API_delay.h"
 #include "API_debounce.h"
 
 /** @addtogroup STM32F4xx_HAL_Examples
@@ -33,7 +33,7 @@
 
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
-#define DELAY_100_MS	100		// Defines para las dos frecuencias de toggleo
+#define DELAY_100_MS	100		// Defines para los dos tiempos de toggleo
 #define DELAY_500_MS	500
 /* Private macro -------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
@@ -74,7 +74,7 @@ int main(void)
 
 	BSP_LED_Init(LED2);						// Inicializacion de los LED
 
-	debounceFSM_init();						// Inicializacion de la FSM y las variables
+	debounceFSM_init();
 	delayInit(&ledDelay, DELAY_100_MS);
 	activeDelay = 0;
 
@@ -82,24 +82,24 @@ int main(void)
 	while (1)
 	{
 
-		debounceFSM_update();				// Corre la iteracion de la FMS. Chequea si hay nuevos eventos y actualiza el estado segun corresponda
+		debounceFSM_update();
 
-		if(readKey())										// Si ocurrio un evento de flanco descendente entra para cambiar la frecuencia de toggleo
+		if(readKey())
 		{
-			if(!activeDelay)								// Dependiendo de que frecuencia esta activa, cambia a la otra
+			if(!activeDelay)
 			{
-				delayWrite(&ledDelay, DELAY_500_MS);		// Cambia la duracion del delay a 500ms
+				delayWrite(&ledDelay, DELAY_500_MS);
 				activeDelay++;
 			}
 			else
 			{
-				delayWrite(&ledDelay, DELAY_100_MS);		// Cambia la duracion del delay a 100ms
+				delayWrite(&ledDelay, DELAY_100_MS);
 				activeDelay = 0;
 			}
-			delayRead(&ledDelay);							// Resetea el delay
+			delayRead(&ledDelay);
 		}
 
-		if(delayRead(&ledDelay))							// Si transcurrio el tiempo del delay, togglea el LED
+		if(delayRead(&ledDelay))
 			BSP_LED_Toggle(LED2);
 
 	}

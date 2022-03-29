@@ -93,7 +93,7 @@ void debounceFSM_update()
 					buttonReleased();
 				}
 				else
-					estadoActual = BUTTON_DOWN;			// Si sigue apretado, vuelve al estado anterior
+					estadoActual = BUTTON_DOWN;
 			}
 
 

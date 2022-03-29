@@ -20,7 +20,7 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
-#include "API_delay.h"
+//#include "API_delay.h"
 #include "API_debounce.h"
 
 /** @addtogroup STM32F4xx_HAL_Examples
@@ -86,20 +86,20 @@ int main(void)
 
 		if(readKey())										// Si ocurrio un evento de flanco descendente entra para cambiar la frecuencia de toggleo
 		{
-			if(!activeDelay)								// Dependiendo de que frecuencia esta activa, cambia a la otra
+			if(!activeDelay)
 			{
-				delayWrite(&ledDelay, DELAY_500_MS);		// Cambia la duracion del delay a 500ms
+				delayWrite(&ledDelay, DELAY_500_MS);
 				activeDelay++;
 			}
 			else
 			{
-				delayWrite(&ledDelay, DELAY_100_MS);		// Cambia la duracion del delay a 100ms
+				delayWrite(&ledDelay, DELAY_100_MS);
 				activeDelay = 0;
 			}
-			delayRead(&ledDelay);							// Resetea el delay
+			delayRead(&ledDelay);
 		}
 
-		if(delayRead(&ledDelay))							// Si transcurrio el tiempo del delay, togglea el LED
+		if(delayRead(&ledDelay))
 			BSP_LED_Toggle(LED2);
 
 	}

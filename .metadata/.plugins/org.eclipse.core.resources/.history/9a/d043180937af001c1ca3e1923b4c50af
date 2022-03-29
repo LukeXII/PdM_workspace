@@ -16,7 +16,5 @@
 void debounceFSM_init();
 void debounceFSM_update();
 bool_t readKey();
-void buttonPressed();
-void buttonReleased();
 
 #endif /* API_INC_API_DEBOUNCE_H_ */

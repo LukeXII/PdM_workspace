@@ -34,15 +34,12 @@ bool_t readKey()
 // Salida: Ninguna
 void debounceFSM_init()
 {
-	estadoActual = BUTTON_UP;							// Asigna el estado inicial
+	estadoActual = BUTTON_UP;
 	delayInit(&buttonDelay, DEBOUNCE_DELAY);			// Inicializacion del delay
 	/* Initialize BSP PB for BUTTON_USER */
-	BSP_PB_Init(BUTTON_USER, BUTTON_MODE_GPIO);			// Inicializa el boton
+	BSP_PB_Init(BUTTON_USER, BUTTON_MODE_GPIO);
 }
 
-// Funcion: actualiza la maquina de estados evaluando si sucedio alguno de los eventos que la hacen conmutar
-// Entrada; Ninguna
-// Salida: Ninguna
 void debounceFSM_update()
 {
 
@@ -50,7 +47,7 @@ void debounceFSM_update()
 	{
 		case BUTTON_UP:
 
-			if(BSP_PB_GetState(BUTTON_USER))			// Si se detecta un flanco ascendente, inicializa el timer y avanza al siguiente estado
+			if(BSP_PB_GetState(BUTTON_USER))
 			{
 				delayRead(&buttonDelay);
 				estadoActual = BUTTON_FALLING;
@@ -60,22 +57,22 @@ void debounceFSM_update()
 
 		case BUTTON_FALLING:
 
-			if(delayRead(&buttonDelay))					// Una vez transcurrido el tiempo de debounce, pregunta si el boton sigue apretado
+			if(delayRead(&buttonDelay))
 			{
 				if(BSP_PB_GetState(BUTTON_USER))
 				{
-					estadoActual = BUTTON_DOWN;			// Si sigue apretado, avanza al siguiente estado y llama a la funcion de boton presionado
+					estadoActual = BUTTON_DOWN;
 					buttonPressed();
 				}
 				else
-					estadoActual = BUTTON_UP;			// Si no sigue apretado, vuelve al estado anterior
+					estadoActual = BUTTON_UP;
 			}
 
 		break;
 
 		case BUTTON_DOWN:
 
-			if(!BSP_PB_GetState(BUTTON_USER))			// Si se detecta un flanco descendente, inicializa el timer y avanza al siguiente estado
+			if(!BSP_PB_GetState(BUTTON_USER))
 			{
 				delayRead(&buttonDelay);
 				estadoActual = BUTTON_RISING;
@@ -85,15 +82,15 @@ void debounceFSM_update()
 
 		case BUTTON_RISING:
 
-			if(delayRead(&buttonDelay))					// Una vez transcurrido el tiempo de debounce, pregunta si el boton no esta apretado
+			if(delayRead(&buttonDelay))
 			{
 				if(!BSP_PB_GetState(BUTTON_USER))
 				{
-					estadoActual = BUTTON_UP;			// Si no esta apretado, avanza al siguiente estado y llama a la funcion de boton liberado
+					estadoActual = BUTTON_UP;
 					buttonReleased();
 				}
 				else
-					estadoActual = BUTTON_DOWN;			// Si sigue apretado, vuelve al estado anterior
+					estadoActual = BUTTON_DOWN;
 			}
 
 

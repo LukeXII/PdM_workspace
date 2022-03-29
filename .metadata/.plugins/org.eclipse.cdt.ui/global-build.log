@@ -368,3 +368,107 @@ arm-none-eabi-size   Practica_4.2.elf
    7076	     36	   1668	   8780	   224c	Practica_4.2.elf
 Finished building: default.size.stdout
  
+01:05:12 **** Incremental Build of configuration Debug for project Practica_4.2 ****
+make -j16 all 
+arm-none-eabi-gcc "../Src/main.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DSTM32 -DSTM32F429ZITx -DSTM32F4 -DNUCLEO_F429ZI -DUSE_HAL_DRIVER -DSTM32F429xx -c -I../Inc -I"C:/Users/theda/Desktop/Repo/PdM_workspace/Practica_4.2/Drivers/STM32F4xx_HAL_Driver/Inc" -I"C:/Users/theda/Desktop/Repo/PdM_workspace/Practica_4.2/Drivers/CMSIS/Include" -I"C:/Users/theda/Desktop/Repo/PdM_workspace/Practica_4.2/Drivers/CMSIS/Device/ST/STM32F4xx/Include" -I"C:/Users/theda/Desktop/Repo/PdM_workspace/Practica_4.2/Drivers/BSP/STM32F4xx_Nucleo_144" -I"C:/Users/theda/Desktop/Repo/PdM_workspace/Practica_4.2/Drivers/Core/Inc" -I"C:/Users/theda/Desktop/Repo/PdM_workspace/Practica_4.2/Drivers/API" -I"C:/Users/theda/Desktop/Repo/PdM_workspace/Practica_4.2/Drivers/API/src" -I"C:/Users/theda/Desktop/Repo/PdM_workspace/Practica_4.2/Drivers/API/inc" -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -MMD -MP -MF"Src/main.d" -MT"Src/main.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Src/main.o"
+arm-none-eabi-gcc "../Drivers/API/src/API_debounce.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DSTM32 -DSTM32F429ZITx -DSTM32F4 -DNUCLEO_F429ZI -DUSE_HAL_DRIVER -DSTM32F429xx -c -I../Inc -I"C:/Users/theda/Desktop/Repo/PdM_workspace/Practica_4.2/Drivers/STM32F4xx_HAL_Driver/Inc" -I"C:/Users/theda/Desktop/Repo/PdM_workspace/Practica_4.2/Drivers/CMSIS/Include" -I"C:/Users/theda/Desktop/Repo/PdM_workspace/Practica_4.2/Drivers/CMSIS/Device/ST/STM32F4xx/Include" -I"C:/Users/theda/Desktop/Repo/PdM_workspace/Practica_4.2/Drivers/BSP/STM32F4xx_Nucleo_144" -I"C:/Users/theda/Desktop/Repo/PdM_workspace/Practica_4.2/Drivers/Core/Inc" -I"C:/Users/theda/Desktop/Repo/PdM_workspace/Practica_4.2/Drivers/API" -I"C:/Users/theda/Desktop/Repo/PdM_workspace/Practica_4.2/Drivers/API/src" -I"C:/Users/theda/Desktop/Repo/PdM_workspace/Practica_4.2/Drivers/API/inc" -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -MMD -MP -MF"Drivers/API/src/API_debounce.d" -MT"Drivers/API/src/API_debounce.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Drivers/API/src/API_debounce.o"
+../Drivers/API/src/API_debounce.c: In function 'debounceFSM_update':
+../Drivers/API/src/API_debounce.c:62:6: warning: implicit declaration of function 'buttonPressed' [-Wimplicit-function-declaration]
+   62 |      buttonPressed();
+      |      ^~~~~~~~~~~~~
+../Drivers/API/src/API_debounce.c:87:6: warning: implicit declaration of function 'buttonReleased' [-Wimplicit-function-declaration]
+   87 |      buttonReleased();
+      |      ^~~~~~~~~~~~~~
+../Drivers/API/src/API_debounce.c: At top level:
+../Drivers/API/src/API_debounce.c:109:6: warning: conflicting types for 'buttonPressed'
+  109 | void buttonPressed()
+      |      ^~~~~~~~~~~~~
+../Drivers/API/src/API_debounce.c:62:6: note: previous implicit declaration of 'buttonPressed' was here
+   62 |      buttonPressed();
+      |      ^~~~~~~~~~~~~
+../Drivers/API/src/API_debounce.c:117:6: warning: conflicting types for 'buttonReleased'
+  117 | void buttonReleased()
+      |      ^~~~~~~~~~~~~~
+../Drivers/API/src/API_debounce.c:87:6: note: previous implicit declaration of 'buttonReleased' was here
+   87 |      buttonReleased();
+      |      ^~~~~~~~~~~~~~
+arm-none-eabi-gcc -o "Practica_4.2.elf" @"objects.list"   -mcpu=cortex-m4 -T"C:\Users\theda\Desktop\Repo\PdM_workspace\Practica_4.2\STM32F429ZITX_FLASH.ld" --specs=nosys.specs -Wl,-Map="Practica_4.2.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+Finished building target: Practica_4.2.elf
+ 
+arm-none-eabi-size   Practica_4.2.elf 
+arm-none-eabi-objdump -h -S  Practica_4.2.elf  > "Practica_4.2.list"
+arm-none-eabi-objcopy  -O binary  Practica_4.2.elf  "Practica_4.2.bin"
+   text	   data	    bss	    dec	    hex	filename
+   7112	     36	   1668	   8816	   2270	Practica_4.2.elf
+Finished building: default.size.stdout
+ 
+Finished building: Practica_4.2.bin
+Finished building: Practica_4.2.list
+ 
+ 
+01:05:49 **** Incremental Build of configuration Debug for project Practica_4.2 ****
+make -j16 all 
+arm-none-eabi-gcc "../Src/main.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DSTM32 -DSTM32F429ZITx -DSTM32F4 -DNUCLEO_F429ZI -DUSE_HAL_DRIVER -DSTM32F429xx -c -I../Inc -I"C:/Users/theda/Desktop/Repo/PdM_workspace/Practica_4.2/Drivers/STM32F4xx_HAL_Driver/Inc" -I"C:/Users/theda/Desktop/Repo/PdM_workspace/Practica_4.2/Drivers/CMSIS/Include" -I"C:/Users/theda/Desktop/Repo/PdM_workspace/Practica_4.2/Drivers/CMSIS/Device/ST/STM32F4xx/Include" -I"C:/Users/theda/Desktop/Repo/PdM_workspace/Practica_4.2/Drivers/BSP/STM32F4xx_Nucleo_144" -I"C:/Users/theda/Desktop/Repo/PdM_workspace/Practica_4.2/Drivers/Core/Inc" -I"C:/Users/theda/Desktop/Repo/PdM_workspace/Practica_4.2/Drivers/API" -I"C:/Users/theda/Desktop/Repo/PdM_workspace/Practica_4.2/Drivers/API/src" -I"C:/Users/theda/Desktop/Repo/PdM_workspace/Practica_4.2/Drivers/API/inc" -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -MMD -MP -MF"Src/main.d" -MT"Src/main.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Src/main.o"
+arm-none-eabi-gcc "../Drivers/API/src/API_debounce.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DSTM32 -DSTM32F429ZITx -DSTM32F4 -DNUCLEO_F429ZI -DUSE_HAL_DRIVER -DSTM32F429xx -c -I../Inc -I"C:/Users/theda/Desktop/Repo/PdM_workspace/Practica_4.2/Drivers/STM32F4xx_HAL_Driver/Inc" -I"C:/Users/theda/Desktop/Repo/PdM_workspace/Practica_4.2/Drivers/CMSIS/Include" -I"C:/Users/theda/Desktop/Repo/PdM_workspace/Practica_4.2/Drivers/CMSIS/Device/ST/STM32F4xx/Include" -I"C:/Users/theda/Desktop/Repo/PdM_workspace/Practica_4.2/Drivers/BSP/STM32F4xx_Nucleo_144" -I"C:/Users/theda/Desktop/Repo/PdM_workspace/Practica_4.2/Drivers/Core/Inc" -I"C:/Users/theda/Desktop/Repo/PdM_workspace/Practica_4.2/Drivers/API" -I"C:/Users/theda/Desktop/Repo/PdM_workspace/Practica_4.2/Drivers/API/src" -I"C:/Users/theda/Desktop/Repo/PdM_workspace/Practica_4.2/Drivers/API/inc" -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -MMD -MP -MF"Drivers/API/src/API_debounce.d" -MT"Drivers/API/src/API_debounce.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Drivers/API/src/API_debounce.o"
+arm-none-eabi-gcc -o "Practica_4.2.elf" @"objects.list"   -mcpu=cortex-m4 -T"C:\Users\theda\Desktop\Repo\PdM_workspace\Practica_4.2\STM32F429ZITX_FLASH.ld" --specs=nosys.specs -Wl,-Map="Practica_4.2.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+Finished building target: Practica_4.2.elf
+ 
+arm-none-eabi-size   Practica_4.2.elf 
+arm-none-eabi-objdump -h -S  Practica_4.2.elf  > "Practica_4.2.list"
+arm-none-eabi-objcopy  -O binary  Practica_4.2.elf  "Practica_4.2.bin"
+   text	   data	    bss	    dec	    hex	filename
+   7112	     36	   1668	   8816	   2270	Practica_4.2.elf
+Finished building: default.size.stdout
+ 
+Finished building: Practica_4.2.bin
+Finished building: Practica_4.2.list
+ 
+ 
+01:06:00 **** Incremental Build of configuration Debug for project Practica_4.2 ****
+make -j16 all 
+arm-none-eabi-size   Practica_4.2.elf 
+   text	   data	    bss	    dec	    hex	filename
+   7112	     36	   1668	   8816	   2270	Practica_4.2.elf
+Finished building: default.size.stdout
+ 
+01:07:14 **** Incremental Build of configuration Debug for project Practica_4.2 ****
+make -j16 all 
+arm-none-eabi-gcc "../Src/main.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DSTM32 -DSTM32F429ZITx -DSTM32F4 -DNUCLEO_F429ZI -DUSE_HAL_DRIVER -DSTM32F429xx -c -I../Inc -I"C:/Users/theda/Desktop/Repo/PdM_workspace/Practica_4.2/Drivers/STM32F4xx_HAL_Driver/Inc" -I"C:/Users/theda/Desktop/Repo/PdM_workspace/Practica_4.2/Drivers/CMSIS/Include" -I"C:/Users/theda/Desktop/Repo/PdM_workspace/Practica_4.2/Drivers/CMSIS/Device/ST/STM32F4xx/Include" -I"C:/Users/theda/Desktop/Repo/PdM_workspace/Practica_4.2/Drivers/BSP/STM32F4xx_Nucleo_144" -I"C:/Users/theda/Desktop/Repo/PdM_workspace/Practica_4.2/Drivers/Core/Inc" -I"C:/Users/theda/Desktop/Repo/PdM_workspace/Practica_4.2/Drivers/API" -I"C:/Users/theda/Desktop/Repo/PdM_workspace/Practica_4.2/Drivers/API/src" -I"C:/Users/theda/Desktop/Repo/PdM_workspace/Practica_4.2/Drivers/API/inc" -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -MMD -MP -MF"Src/main.d" -MT"Src/main.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Src/main.o"
+arm-none-eabi-gcc -o "Practica_4.2.elf" @"objects.list"   -mcpu=cortex-m4 -T"C:\Users\theda\Desktop\Repo\PdM_workspace\Practica_4.2\STM32F429ZITX_FLASH.ld" --specs=nosys.specs -Wl,-Map="Practica_4.2.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+Finished building target: Practica_4.2.elf
+ 
+arm-none-eabi-size   Practica_4.2.elf 
+arm-none-eabi-objdump -h -S  Practica_4.2.elf  > "Practica_4.2.list"
+arm-none-eabi-objcopy  -O binary  Practica_4.2.elf  "Practica_4.2.bin"
+   text	   data	    bss	    dec	    hex	filename
+   7112	     36	   1668	   8816	   2270	Practica_4.2.elf
+Finished building: default.size.stdout
+ 
+Finished building: Practica_4.2.bin
+Finished building: Practica_4.2.list
+ 
+ 
+01:12:54 **** Incremental Build of configuration Debug for project Practica_4.2 ****
+make -j16 all 
+arm-none-eabi-gcc "../Drivers/API/src/API_debounce.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DSTM32 -DSTM32F429ZITx -DSTM32F4 -DNUCLEO_F429ZI -DUSE_HAL_DRIVER -DSTM32F429xx -c -I../Inc -I"C:/Users/theda/Desktop/Repo/PdM_workspace/Practica_4.2/Drivers/STM32F4xx_HAL_Driver/Inc" -I"C:/Users/theda/Desktop/Repo/PdM_workspace/Practica_4.2/Drivers/CMSIS/Include" -I"C:/Users/theda/Desktop/Repo/PdM_workspace/Practica_4.2/Drivers/CMSIS/Device/ST/STM32F4xx/Include" -I"C:/Users/theda/Desktop/Repo/PdM_workspace/Practica_4.2/Drivers/BSP/STM32F4xx_Nucleo_144" -I"C:/Users/theda/Desktop/Repo/PdM_workspace/Practica_4.2/Drivers/Core/Inc" -I"C:/Users/theda/Desktop/Repo/PdM_workspace/Practica_4.2/Drivers/API" -I"C:/Users/theda/Desktop/Repo/PdM_workspace/Practica_4.2/Drivers/API/src" -I"C:/Users/theda/Desktop/Repo/PdM_workspace/Practica_4.2/Drivers/API/inc" -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -MMD -MP -MF"Drivers/API/src/API_debounce.d" -MT"Drivers/API/src/API_debounce.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Drivers/API/src/API_debounce.o"
+arm-none-eabi-gcc -o "Practica_4.2.elf" @"objects.list"   -mcpu=cortex-m4 -T"C:\Users\theda\Desktop\Repo\PdM_workspace\Practica_4.2\STM32F429ZITX_FLASH.ld" --specs=nosys.specs -Wl,-Map="Practica_4.2.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+Finished building target: Practica_4.2.elf
+ 
+arm-none-eabi-size   Practica_4.2.elf 
+arm-none-eabi-objdump -h -S  Practica_4.2.elf  > "Practica_4.2.list"
+arm-none-eabi-objcopy  -O binary  Practica_4.2.elf  "Practica_4.2.bin"
+   text	   data	    bss	    dec	    hex	filename
+   7112	     36	   1668	   8816	   2270	Practica_4.2.elf
+Finished building: default.size.stdout
+ 
+Finished building: Practica_4.2.bin
+Finished building: Practica_4.2.list
+ 
+ 
+01:13:06 **** Incremental Build of configuration Debug for project Practica_4.2 ****
+make -j16 all 
+arm-none-eabi-size   Practica_4.2.elf 
+   text	   data	    bss	    dec	    hex	filename
+   7112	     36	   1668	   8816	   2270	Practica_4.2.elf
+Finished building: default.size.stdout
+ 
