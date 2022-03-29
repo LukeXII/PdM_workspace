@@ -1,5 +1,5 @@
 Programacion de Microcontroladores
 
-Practica 2: Delay no bloqueante <br />
-Objetivo: Prender y apagar tres LED de forma independiente sin bloquear el programa. <br />
-Implementado haciendo uso del tick de 1 ms del SystemCLock del microcontrolador.
+Practica 4.1: Maquinas de estados finito <br />
+Objetivo: Implementar un antirebote para el boton azul de la placa Nucleo STM32F429 utilizando una maquina de estados.
+Implementado haciendo uso de la API delay.
