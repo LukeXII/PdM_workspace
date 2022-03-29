@@ -4648,3 +4648,33 @@ org.eclipse.core.runtime.CoreException: Cannot determine URI for '/p3_modulariza
 
 !ENTRY org.eclipse.cdt.core 1 0 2022-03-27 13:47:55.552
 !MESSAGE Indexed 'Practica_4.2' (100 sources, 210 headers) in 9.84 sec: 29,608 declarations; 93,779 references; 2 unresolved inclusions; 42 syntax errors; 147 unresolved names (0.12%)
+!SESSION 2022-03-27 16:47:28.328 -----------------------------------------------
+eclipse.buildId=Version 1.8.0
+java.version=11.0.11
+java.vendor=AdoptOpenJDK
+BootLoader constants: OS=win32, ARCH=x86_64, WS=win32, NL=en_US
+Command-line arguments:  -os win32 -ws win32 -arch x86_64
+
+!ENTRY com.st.stm32cube.ide.mcu.informationcenter 4 4 2022-03-27 16:47:33.515
+!MESSAGE CubeMX plugin appears to be active, Log4j initialization might be too late.
+
+!ENTRY com.st.stm32cube.ide.mcu.informationcenter 1 1 2022-03-27 16:47:33.593
+!MESSAGE Log4j initialized with config file C:\Users\theda\Desktop\Repo\PdM_workspace\.metadata\.log4j.xml
+
+!ENTRY com.st.stm32cube.ide.mcu.ide 1 1 2022-03-27 16:47:39.483
+!MESSAGE Started RMI Server, listening on port 41337
+!SESSION 2022-03-28 22:34:27.946 -----------------------------------------------
+eclipse.buildId=Version 1.8.0
+java.version=11.0.11
+java.vendor=AdoptOpenJDK
+BootLoader constants: OS=win32, ARCH=x86_64, WS=win32, NL=en_US
+Command-line arguments:  -os win32 -ws win32 -arch x86_64
+
+!ENTRY com.st.stm32cube.ide.mcu.informationcenter 4 4 2022-03-28 22:34:31.274
+!MESSAGE CubeMX plugin appears to be active, Log4j initialization might be too late.
+
+!ENTRY com.st.stm32cube.ide.mcu.informationcenter 1 1 2022-03-28 22:34:31.320
+!MESSAGE Log4j initialized with config file C:\Users\theda\Desktop\Repo\PdM_workspace\.metadata\.log4j.xml
+
+!ENTRY com.st.stm32cube.ide.mcu.ide 1 1 2022-03-28 22:34:35.832
+!MESSAGE Started RMI Server, listening on port 41337

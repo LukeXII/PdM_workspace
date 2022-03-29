@@ -108,22 +108,27 @@ int main(void)
 	}
 }
 
+// Funcion: inicializa la maquina de estados con el estado inicial y las variables internas al mismo
+// Entrada; Ninguna
+// Salida: Ninguna
 void debounceFSM_init()
 {
-	estadoActual = BUTTON_UP;
-	delayInit(&buttonDelay, DEBOUNCE_DELAY);			// Inicializacion del delay
+	estadoActual = BUTTON_UP;							// Asigna el estado inicial
+	delayInit(&buttonDelay, DEBOUNCE_DELAY);			// Inicializa el delay del debouncer
 
 }
 
+// Funcion: actualiza la maquina de estados evaluando si sucedio alguno de los eventos que la hacen conmutar
+// Entrada; Ninguna
+// Salida: Ninguna
 void debounceFSM_update()
 {
 
 	switch (estadoActual)
 	{
 		case BUTTON_UP:
-		// Actualizar salida del estado
-		// Chequear condiciones de transición de estado
-			if(BSP_PB_GetState(BUTTON_USER))
+
+			if(BSP_PB_GetState(BUTTON_USER))		// Si se detecta un flanco ascendente, inicializa el timer y avanza al siguiente estado
 			{
 				delayRead(&buttonDelay);
 				estadoActual = BUTTON_FALLING;
@@ -133,22 +138,22 @@ void debounceFSM_update()
 
 		case BUTTON_FALLING:
 
-			if(delayRead(&buttonDelay))
+			if(delayRead(&buttonDelay))				// Una vez transcurrido el tiempo de debounce, pregunta si el boton sigue apretado
 			{
 				if(BSP_PB_GetState(BUTTON_USER))
 				{
-					estadoActual = BUTTON_DOWN;
+					estadoActual = BUTTON_DOWN;		// Si sigue apretado, avanza al siguiente estado y llama a la funcion que togglea el LED1
 					buttonPressed();
 				}
 				else
-					estadoActual = BUTTON_UP;
+					estadoActual = BUTTON_UP;		// Si no sigue apretado, vuelve al estado anterior
 			}
 
 		break;
 
 		case BUTTON_DOWN:
 
-			if(!BSP_PB_GetState(BUTTON_USER))
+			if(!BSP_PB_GetState(BUTTON_USER))		// Si se detecta un flanco descendente, inicializa el timer y avanza al siguiente estado
 			{
 				delayRead(&buttonDelay);
 				estadoActual = BUTTON_RISING;
@@ -158,23 +163,22 @@ void debounceFSM_update()
 
 		case BUTTON_RISING:
 
-			if(delayRead(&buttonDelay))
+			if(delayRead(&buttonDelay))				// Una vez transcurrido el tiempo de debounce, pregunta si el boton no esta apretado
 			{
 				if(!BSP_PB_GetState(BUTTON_USER))
 				{
-					estadoActual = BUTTON_UP;
+					estadoActual = BUTTON_UP;		// Si no esta apretado, avanza al siguiente estado y llama a la funcion que togglea el LED1
 					buttonReleased();
 				}
 				else
-					estadoActual = BUTTON_DOWN;
+					estadoActual = BUTTON_DOWN;		// Si sigue apretado, vuelve al estado anterior
 			}
 
 
 		break;
 
 		default:
-			//Si algo modificó la variable estadoActual a un estado no válido llevo la MEF a un lugar seguro, por ejemplo, la reinicio:
-			//controlDeErrores();
+			//Si algo modificó la variable estadoActual a un estado no válido llevo la MEF a un lugar seguro, por ejemplo, la reinicio
 			debounceFSM_init();
 
 		break;
@@ -182,11 +186,17 @@ void debounceFSM_update()
 
 }
 
+// Funcion: togglear el LED3
+// Entrada: Ninguna
+// Salida: Ninguna
 void buttonPressed()
 {
 	BSP_LED_Toggle(LED3);
 }
 
+// Funcion: togglear el LED1
+// Entrada: Ninguna
+// Salida: Ninguna
 void buttonReleased()
 {
 	BSP_LED_Toggle(LED1);
