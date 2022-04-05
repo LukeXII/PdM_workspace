@@ -1,0 +1,29 @@
+/*
+ * API_uart.c
+ *
+ *  Created on: Apr 4, 2022
+ *      Author: Lucas
+ */
+
+#include "API_uart.h"
+
+bool_t uartinit(void)
+{
+
+}
+
+void uartsendString(uint8_t * pstring)
+{
+
+}
+
+void uartSendStringSize(uint8_t * pstring, uint16_t size)
+{
+
+}
+
+void uartReceiveStringSize(uint8_t * pstring, uint16_t size)
+{
+
+
+}
