@@ -1,0 +1,10 @@
+/*
+ * API_LCD.c
+ *
+ *  Created on: Apr 9, 2022
+ *      Author: Lucas
+ */
+
+
+
+	HAL_StatusTypeDef HAL_SPI_Init(SPI_HandleTypeDef *hspi);

@@ -1,0 +1,23 @@
+/*
+ * API_LCD.h
+ *
+ *  Created on: Apr 9, 2022
+ *      Author: Lucas
+ */
+
+#ifndef API_INC_API_LCD_H_
+#define API_INC_API_LCD_H_
+
+typedef struct
+{
+
+}LCDDisplay_t;
+
+// Escribe un texto sobre la pantalla en la posición indicada
+// void writeLCD(const LCDDisplay_t  * LCD, const char * str, color, position, size)
+
+// Setea el color de fondo de la pantalla
+// void setBackgroundColor(LCDDisplay_t  * LCD, color)
+
+
+#endif /* API_INC_API_LCD_H_ */
