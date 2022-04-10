@@ -21,8 +21,11 @@
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 #include "API_delay.h"
-#include "API_debounce.h"
 #include "API_uart.h"
+#include "API_SPI.h"
+#include "API_FSM.h"
+
+
 
 /** @addtogroup STM32F4xx_HAL_Examples
  * @{
@@ -34,12 +37,9 @@
 
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
-#define DELAY_100_MS	100		// Defines para las dos frecuencias de toggleo
-#define DELAY_500_MS	500
+
 /* Private macro -------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
-delay_t ledDelay;				// Delay para el toggleo del LED
-uint8_t activeDelay;			// Indica que delay esta corriendo actualmente. 0 para 100ms, 1 para 500ms
 
 /* UART handler declaration */
 UART_HandleTypeDef UartHandle;
@@ -73,35 +73,17 @@ int main(void)
 	/* Configure the system clock to 180 MHz */
 	SystemClock_Config();
 
+	FSM_Init();
 	BSP_LED_Init(LED2);						// Inicializacion de los LED
-
-	debounceFSM_init();						// Inicializacion de la FSM y las variables
-	delayInit(&ledDelay, DELAY_100_MS);
-	activeDelay = 0;
 
 	/* Infinite loop */
 	while (1)
 	{
 
-		debounceFSM_update();				// Corre la iteracion de la FMS. Chequea si hay nuevos eventos y actualiza el estado segun corresponda
+		// getCmd();
+		FSM_update();				// Corre la iteracion de la FMS. Chequea si hay nuevos eventos y actualiza el estado segun corresponda
 
-		if(readKey())										// Si ocurrio un evento de flanco descendente entra para cambiar la frecuencia de toggleo
-		{
-			if(!activeDelay)								// Dependiendo de que frecuencia esta activa, cambia a la otra
-			{
-				delayWrite(&ledDelay, DELAY_500_MS);		// Cambia la duracion del delay a 500ms
-				activeDelay++;
-			}
-			else
-			{
-				delayWrite(&ledDelay, DELAY_100_MS);		// Cambia la duracion del delay a 100ms
-				activeDelay = 0;
-			}
-			delayRead(&ledDelay);							// Resetea el delay
-		}
-
-		if(delayRead(&ledDelay))							// Si transcurrio el tiempo del delay, togglea el LED
-			BSP_LED_Toggle(LED2);
+		LCD_Update();
 
 	}
 }
