@@ -22,7 +22,7 @@
 #include "main.h"
 #include "API_delay.h"
 #include "API_uart.h"
-#include "API_SPI.h"
+#include "API_LCD.h"
 #include "API_FSM.h"
 
 
