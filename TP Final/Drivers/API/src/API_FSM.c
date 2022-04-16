@@ -8,15 +8,23 @@
 #include "API_FSM.h"
 
 static FSMState_t currentState;
-static FSMEvent_t newEvent;
+
+static FSMTableCell_t state_A[] = {{state_A, NO_EVENT, &no_Action}};
+static FSMTableCell_t state_B[] = {{state_B, NO_EVENT, &no_Action}};
+static FSMTableCell_t state_C[] = {{state_C, NO_EVENT, &no_Action}};
 
 void FSM_Init()
 {
-	currentState = STATE_A;
-	newEvent = NO_EVENT;
+	currentState = state_A;
 }
 
-void FSM_Update()
+void FSM_Update(FSMEvent_t event)
+{
+	//for(;;)
+		//;
+}
+
+void no_Action(void)
 {
 
 }

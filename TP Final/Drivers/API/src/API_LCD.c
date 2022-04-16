@@ -27,7 +27,7 @@ bool LCD_init(void)
 
     if (HAL_SPI_Init(&deviceLCD.SPI_Handle) != HAL_OK)
     {
-        asm("bkpt 255");
+        //asm("bkpt 255");
     }
 
 
@@ -36,17 +36,47 @@ bool LCD_init(void)
 void LCD_writeText(const char * str, color, position, size)
 {
 
+	if((str != NULL) &&
+		(size > 0) &&
+		(size <= 10) &&
+		(position >= 0) &&
+		(position <= LCDPixelSizeX) &&
+		(position >= 0) &&
+		(position <= LCDPixelSizeY) &&
+		(color <= 100) &&
+		(color >= 0))
+	{
+		HAL_GPIO_WritePin(GPIOA, GPIO_PIN_4, GPIO_PIN_RESET);
+		HAL_SPI_Transmit(&deviceLCD.SPI_Handle, (uint8_t *)str, , 10);
+		HAL_GPIO_WritePin(GPIOA, GPIO_PIN_4, GPIO_PIN_SET);
+	}
+	else
+	{
 
+	}
 
-	HAL_GPIO_WritePin(GPIOA, GPIO_PIN_4, GPIO_PIN_RESET);
-	HAL_SPI_Transmit(&deviceLCD.SPI_Handle, (uint8_t *)str, , 10);
-	HAL_GPIO_WritePin(GPIOA, GPIO_PIN_4, GPIO_PIN_SET);
 }
 
 void LCD_setBackgroundColor(color)
 {
-	HAL_GPIO_WritePin(GPIOA, GPIO_PIN_4, GPIO_PIN_RESET);
-	//HAL_SPI_Transmit(&deviceLCD.SPI_Handle, (uint8_t *)str, , 10);
-	HAL_GPIO_WritePin(GPIOA, GPIO_PIN_4, GPIO_PIN_SET);
+
+	//if((color <= ) && (color >= ))
+	//{
+		HAL_GPIO_WritePin(GPIOA, GPIO_PIN_4, GPIO_PIN_RESET);
+		//HAL_SPI_Transmit(&deviceLCD.SPI_Handle, (uint8_t *)str, , 10);
+		HAL_GPIO_WritePin(GPIOA, GPIO_PIN_4, GPIO_PIN_SET);
+
+	//}
+		/*else
+		{
+
+		}*/
 
 }
+
+void refresh(void)
+{
+
+
+}
+

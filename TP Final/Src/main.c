@@ -41,15 +41,16 @@
 /* Private macro -------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
 
-/* UART handler declaration */
-UART_HandleTypeDef UartHandle;
+FSMEvent_t newEvent;
 
 /* Private function prototypes -----------------------------------------------*/
 
 static void SystemClock_Config(void);
 static void Error_Handler(void);
 
-/* Private functions ---------------------------------------------------------*/
+/* Public functions prototypes -----------------------------------------------*/
+
+FSMEvent_t eventGenerator(void);
 
 /**
  * @brief  Main program
@@ -80,14 +81,20 @@ int main(void)
 	while (1)
 	{
 
-		// getCmd();
-		FSM_update();				// Corre la iteracion de la FMS. Chequea si hay nuevos eventos y actualiza el estado segun corresponda
+		newEvent = eventGenerator();
+		FSM_Update(newEvent);				// Corre la iteracion de la FMS. Chequea si hay nuevos eventos y actualiza el estado segun corresponda
 
 		LCD_Update();
 
 	}
 }
 
+/* Public functions --------------------------------------------------------*/
+
+FSMEvent_t eventGenerator(void)
+{
+	uartReceiveStringSize(uint8_t * pstring, uint16_t size);
+}
 
 /**
  * @brief  System Clock Configuration

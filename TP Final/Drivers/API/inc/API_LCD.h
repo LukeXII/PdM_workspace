@@ -26,5 +26,7 @@ void LCD_writeText(const LCDHandle_t  * LCD, const char * str, color, position, 
 // Setea el color de fondo de la pantalla
 void LCD_setBackgroundColor(const LCDHandle_t  * LCD, color);
 
+//
+void LCD_refresh(void);
 
 #endif /* API_INC_API_LCD_H_ */
