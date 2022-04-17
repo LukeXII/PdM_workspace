@@ -29,7 +29,7 @@ static void UART_Error_Handler(void);
 bool_t uartinit(void)
 {
 	// Configuracion del UART
-	myUARTHandler.Instance			= USARTx;
+	myUARTHandler.Instance			= USART3;
 	myUARTHandler.Init.BaudRate		= DEFAULT_BAUDRATE;
 	myUARTHandler.Init.WordLength	= UART_WORDLENGTH_8B;
 	myUARTHandler.Init.StopBits		= UART_STOPBITS_1;

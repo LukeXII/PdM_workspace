@@ -8,6 +8,7 @@
 #ifndef API_INC_API_LCD_H_
 #define API_INC_API_LCD_H_
 
+#include <stdbool.h>
 #include "stm32f4xx_hal.h"  		/* <- HAL include */
 
 typedef struct
@@ -18,13 +19,13 @@ typedef struct
 }LCDHandle_t;
 
 // Inicializa el handle del LCD
-bool LCD_init(const LCDHandle_t  * LCD, );
+void LCD_init (void);
 
 // Escribe un texto sobre la pantalla en la posición indicada
-void LCD_writeText(const LCDHandle_t  * LCD, const char * str, color, position, size);
+//void LCD_writeText(const char * str, color, position, size);
 
 // Setea el color de fondo de la pantalla
-void LCD_setBackgroundColor(const LCDHandle_t  * LCD, color);
+//void LCD_setBackgroundColor(const LCDHandle_t  * LCD, color);
 
 //
 void LCD_refresh(void);

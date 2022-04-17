@@ -20,11 +20,9 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
-#include "API_delay.h"
 #include "API_uart.h"
 #include "API_LCD.h"
 #include "API_FSM.h"
-
 
 
 /** @addtogroup STM32F4xx_HAL_Examples
@@ -50,7 +48,8 @@ static void Error_Handler(void);
 
 /* Public functions prototypes -----------------------------------------------*/
 
-FSMEvent_t eventGenerator(void);
+void eventGenerator(void);
+char mybuffer[10];
 
 /**
  * @brief  Main program
@@ -81,19 +80,22 @@ int main(void)
 	while (1)
 	{
 
-		newEvent = eventGenerator();
+		eventGenerator();
 		FSM_Update(newEvent);				// Corre la iteracion de la FMS. Chequea si hay nuevos eventos y actualiza el estado segun corresponda
 
-		LCD_Update();
+		//LCD_Update();
 
 	}
 }
 
 /* Public functions --------------------------------------------------------*/
 
-FSMEvent_t eventGenerator(void)
+void eventGenerator(void)
 {
-	uartReceiveStringSize(uint8_t * pstring, uint16_t size);
+	newEvent = NO_EVENT;
+
+	uartReceiveStringSize((uint8_t *)mybuffer, 10);
+
 }
 
 /**

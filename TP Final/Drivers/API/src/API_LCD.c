@@ -9,8 +9,11 @@
 
 static LCDHandle_t deviceLCD;
 
-bool LCD_init(void)
+void LCD_init(void)
 {
+
+	deviceLCD.LCDPixelSizeX = 320;
+	deviceLCD.LCDPixelSizeY = 240;
 
     __SPI1_CLK_ENABLE();
     deviceLCD.SPI_Handle.Instance 				= SPI1;
@@ -32,7 +35,7 @@ bool LCD_init(void)
 
 
 }
-
+/*
 void LCD_writeText(const char * str, color, position, size)
 {
 
@@ -40,14 +43,14 @@ void LCD_writeText(const char * str, color, position, size)
 		(size > 0) &&
 		(size <= 10) &&
 		(position >= 0) &&
-		(position <= LCDPixelSizeX) &&
+		(position <= deviceLCD.LCDPixelSizeX) &&
 		(position >= 0) &&
-		(position <= LCDPixelSizeY) &&
+		(position <= deviceLCD.LCDPixelSizeY) &&
 		(color <= 100) &&
 		(color >= 0))
 	{
 		HAL_GPIO_WritePin(GPIOA, GPIO_PIN_4, GPIO_PIN_RESET);
-		HAL_SPI_Transmit(&deviceLCD.SPI_Handle, (uint8_t *)str, , 10);
+		//HAL_SPI_Transmit(&deviceLCD.SPI_Handle, (uint8_t *)str, , 10);
 		HAL_GPIO_WritePin(GPIOA, GPIO_PIN_4, GPIO_PIN_SET);
 	}
 	else
@@ -67,16 +70,16 @@ void LCD_setBackgroundColor(color)
 		HAL_GPIO_WritePin(GPIOA, GPIO_PIN_4, GPIO_PIN_SET);
 
 	//}
-		/*else
+		else
 		{
 
-		}*/
+		}
 
 }
 
-void refresh(void)
+void LCD_refresh(void)
 {
 
 
 }
-
+*/
