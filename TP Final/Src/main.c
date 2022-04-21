@@ -40,6 +40,7 @@
 /* Private variables ---------------------------------------------------------*/
 
 FSMEvent_t newEvent;
+GPIO_InitTypeDef GPIO_InitStruct;
 
 /* Private function prototypes -----------------------------------------------*/
 
@@ -73,8 +74,23 @@ int main(void)
 	/* Configure the system clock to 180 MHz */
 	SystemClock_Config();
 
-	FSM_Init();
 	BSP_LED_Init(LED2);						// Inicializacion de los LED
+	BSP_LED_Init(LED1);
+
+    /*Configure GPIO pins */
+    GPIO_InitStruct.Pin = LCD_CS_PIN_R | LCD_DC_PIN_R | LCD_RST_PIN | LCD_LED_PIN;
+    GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+    GPIO_InitStruct.Pull = GPIO_PULLDOWN;
+    GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
+    HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
+
+    HAL_GPIO_WritePin(GPIOC, LCD_LED_PIN, GPIO_PIN_SET);
+    HAL_GPIO_WritePin(GPIOC, LCD_CS_PIN_R | LCD_DC_PIN_R | LCD_RST_PIN, GPIO_PIN_RESET);
+
+	LCD_Init();
+	FSM_Init();
+
+	//BSP_LED_On(LED2);
 
 	/* Infinite loop */
 	while (1)
@@ -82,9 +98,13 @@ int main(void)
 
 		eventGenerator();
 		FSM_Update(newEvent);				// Corre la iteracion de la FMS. Chequea si hay nuevos eventos y actualiza el estado segun corresponda
+/*
+	    if(HAL_GPIO_ReadPin(GPIOF, 12))
+	    	BSP_LED_Off(LED2);
+	    else
+	    	BSP_LED_Toggle(LED2);
 
-		//LCD_Update();
-
+	    HAL_Delay(250); */
 	}
 }
 
