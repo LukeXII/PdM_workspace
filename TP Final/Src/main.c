@@ -23,7 +23,7 @@
 #include "API_uart.h"
 #include "API_LCD.h"
 #include "API_FSM.h"
-
+#include "API_GPIO.h"
 
 /** @addtogroup STM32F4xx_HAL_Examples
  * @{
@@ -40,7 +40,6 @@
 /* Private variables ---------------------------------------------------------*/
 
 FSMEvent_t newEvent;
-GPIO_InitTypeDef GPIO_InitStruct;
 
 /* Private function prototypes -----------------------------------------------*/
 
@@ -74,18 +73,12 @@ int main(void)
 	/* Configure the system clock to 180 MHz */
 	SystemClock_Config();
 
+	// Debug LEDs
 	BSP_LED_Init(LED2);						// Inicializacion de los LED
 	BSP_LED_Init(LED1);
 
-    /*Configure GPIO pins */
-    GPIO_InitStruct.Pin = LCD_CS_PIN_R | LCD_DC_PIN_R | LCD_RST_PIN | LCD_LED_PIN;
-    GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
-    GPIO_InitStruct.Pull = GPIO_PULLDOWN;
-    GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
-    HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
-
-    HAL_GPIO_WritePin(GPIOC, LCD_LED_PIN, GPIO_PIN_SET);
-    HAL_GPIO_WritePin(GPIOC, LCD_CS_PIN_R | LCD_DC_PIN_R | LCD_RST_PIN, GPIO_PIN_RESET);
+	GPIO_Config();
+	LCD_Config();
 
 	LCD_Init();
 	FSM_Init();
@@ -98,7 +91,11 @@ int main(void)
 
 		eventGenerator();
 		FSM_Update(newEvent);				// Corre la iteracion de la FMS. Chequea si hay nuevos eventos y actualiza el estado segun corresponda
-/*
+
+		//LCD_Write_Data(0x55);
+		//HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_8);
+		//HAL_Delay(500);
+		/*
 	    if(HAL_GPIO_ReadPin(GPIOF, 12))
 	    	BSP_LED_Off(LED2);
 	    else

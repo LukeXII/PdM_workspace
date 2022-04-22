@@ -15,63 +15,56 @@ void LCD_Config(void)
 	deviceLCD.LCDSizeX = LCD_SCREEN_WIDTH;
 	deviceLCD.LCDSizeY = LCD_SCREEN_HEIGHT;
 
-    __SPI1_CLK_ENABLE();
+    //__SPI1_CLK_ENABLE();
     deviceLCD.SPI_Handle.Instance 				= SPI1;
     deviceLCD.SPI_Handle.Init.Mode 				= SPI_MODE_MASTER;
     deviceLCD.SPI_Handle.Init.Direction 		= SPI_DIRECTION_2LINES;
     deviceLCD.SPI_Handle.Init.DataSize 			= SPI_DATASIZE_8BIT;
-    deviceLCD.SPI_Handle.Init.CLKPolarity 		= SPI_POLARITY_HIGH;
-    deviceLCD.SPI_Handle.Init.CLKPhase 			= SPI_PHASE_2EDGE;
+    deviceLCD.SPI_Handle.Init.CLKPolarity 		= SPI_POLARITY_LOW;
+    deviceLCD.SPI_Handle.Init.CLKPhase 			= SPI_PHASE_1EDGE;
     deviceLCD.SPI_Handle.Init.NSS 				= SPI_NSS_SOFT;
-    deviceLCD.SPI_Handle.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_256;
-    deviceLCD.SPI_Handle.Init.FirstBit 			= SPI_FIRSTBIT_LSB;
+    deviceLCD.SPI_Handle.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_128;
+    deviceLCD.SPI_Handle.Init.FirstBit 			= SPI_FIRSTBIT_MSB;
     deviceLCD.SPI_Handle.Init.TIMode 			= SPI_TIMODE_DISABLED;
     deviceLCD.SPI_Handle.Init.CRCCalculation 	= SPI_CRCCALCULATION_DISABLED;
+    deviceLCD.SPI_Handle.Init.CRCPolynomial 	= 10;
 
     if (HAL_SPI_Init(&deviceLCD.SPI_Handle) != HAL_OK)
     {
     	BSP_LED_On(LED2);
     }
 
-/*
-    GPIO_InitStruct.Pin = 12;
-    GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
-    GPIO_InitStruct.Pull = GPIO_PULLUP;
-    GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
-    HAL_GPIO_Init(GPIOF, &GPIO_InitStruct);
-*/
 
 }
 
 void LCD_Init(void)
 {
-	LCD_Config();
 
-	HAL_GPIO_WritePin(LCD_RST_PORT, LCD_RST_PIN, GPIO_PIN_SET);				//Enables LCD
+	HAL_GPIO_WritePin(LCD_PORT_RST, LCD_PIN_RST, GPIO_PIN_SET);			// Enables LCD
 
-	HAL_GPIO_WritePin(LCD_CS_PORT, LCD_CS_PIN_R, GPIO_PIN_RESET);			//CS OFF
+	HAL_GPIO_WritePin(LCD_PORT_CS, LCD_PIN_CS, GPIO_PIN_RESET);			// CS OFF
 
-	HAL_GPIO_WritePin(LCD_RST_PORT, LCD_RST_PIN, GPIO_PIN_RESET);
+	HAL_GPIO_WritePin(LCD_PORT_RST, LCD_PIN_RST, GPIO_PIN_RESET);
 	HAL_Delay(200);
-	HAL_GPIO_WritePin(LCD_CS_PORT, LCD_CS_PIN_R, GPIO_PIN_RESET);
+	HAL_GPIO_WritePin(LCD_PORT_CS, LCD_PIN_CS, GPIO_PIN_RESET);
 	HAL_Delay(200);
-	HAL_GPIO_WritePin(LCD_RST_PORT, LCD_RST_PIN, GPIO_PIN_SET);
+	HAL_GPIO_WritePin(LCD_PORT_RST, LCD_PIN_RST, GPIO_PIN_SET);
 
 	//SOFTWARE RESET
 	LCD_Write_Command(0x01);
-	HAL_Delay(5);
+	HAL_Delay(100);
 
-/*
+
 	LCD_Write_Command(0xEF);
 	LCD_Write_Data(0x03);
 	LCD_Write_Data(0x80);
 	LCD_Write_Data(0x02);
-*/
+	/*
 	LCD_Write_Command(0xCA);
 	LCD_Write_Data(0xC3);
 	LCD_Write_Data(0x08);
 	LCD_Write_Data(0x50);
-
+*/
 	//POWER CONTROL B
 	LCD_Write_Command(0xCF);
 	LCD_Write_Data(0x00);
@@ -128,6 +121,10 @@ void LCD_Init(void)
 	//MEMORY ACCESS CONTROL
 	LCD_Write_Command(0x0B);
 	LCD_Write_Data(0x48);
+
+	//VERTICAL SCROLL ZERO
+	LCD_Write_Command(0x37);
+	LCD_Write_Data(0x00);
 
 	//PIXEL FORMAT
 	LCD_Write_Command(0x3A);
@@ -190,21 +187,25 @@ void LCD_Init(void)
 
 	//EXIT SLEEP
 	LCD_Write_Command(0x11);
+	LCD_Write_Data(0x80);
 	HAL_Delay(120);
 
 	//TURN ON DISPLAY
 	LCD_Write_Command(0x29);
+	LCD_Write_Data(0x80);
+
+	LCD_Write_Command(0x00);
 
 	//STARTING ROTATION
 	LCD_Set_Rotation(SCREEN_VERTICAL_1);
 
-	LCD_Fill_Screen(WHITE);
+	LCD_Fill_Screen(RED);
 
-	LCD_Draw_Pixel(150, 150, BLACK);
-	LCD_Draw_Pixel(100, 100, BLACK);
-	LCD_Draw_Pixel(200, 200, BLACK);
-	LCD_Draw_Pixel(50, 50, BLACK);
-
+	LCD_Draw_Pixel(150, 150, YELLOW);
+	LCD_Draw_Pixel(100, 100, CYAN);
+	LCD_Draw_Pixel(200, 200, NAVY);
+	LCD_Draw_Pixel(50, 50, WHITE);
+	LCD_Draw_Pixel(132, 203, WHITE);
 }
 
 //FILL THE ENTIRE SCREEN WITH SELECTED COLOUR (either #define-d ones or custom 16bit)
@@ -248,8 +249,8 @@ void LCD_Draw_Colour_Burst(uint16_t Colour, uint32_t Size)
 		Buffer_Size = BURST_MAX_SIZE;
 	}
 
-	HAL_GPIO_WritePin(LCD_DC_PORT, LCD_DC_PIN_R, GPIO_PIN_SET);
-	HAL_GPIO_WritePin(LCD_CS_PORT, LCD_CS_PIN_R, GPIO_PIN_RESET);
+	HAL_GPIO_WritePin(LCD_PORT_DC, LCD_PIN_DC, GPIO_PIN_SET);
+	HAL_GPIO_WritePin(LCD_PORT_CS, LCD_PIN_CS, GPIO_PIN_RESET);
 
 	unsigned char chifted = 	Colour>>8;;
 	unsigned char burst_buffer[Buffer_Size];
@@ -274,7 +275,7 @@ void LCD_Draw_Colour_Burst(uint16_t Colour, uint32_t Size)
 	//REMAINDER!
 	HAL_SPI_Transmit(&(deviceLCD.SPI_Handle), (unsigned char *)burst_buffer, Remainder_from_block, 10);
 
-	HAL_GPIO_WritePin(LCD_CS_PORT, LCD_CS_PIN_R, GPIO_PIN_SET);
+	HAL_GPIO_WritePin(LCD_PORT_CS, LCD_PIN_CS, GPIO_PIN_SET);
 }
 
 /*Set rotation of the screen - changes x0 and y0*/
@@ -326,50 +327,50 @@ void LCD_Draw_Pixel(uint16_t X, uint16_t Y, uint16_t Colour)
 	{
 		unsigned char tempBuffer[4];
 		//ADDRESS
-		HAL_GPIO_WritePin(LCD_DC_PORT, LCD_DC_PIN_R, GPIO_PIN_RESET);
-		HAL_GPIO_WritePin(LCD_CS_PORT, LCD_CS_PIN_R, GPIO_PIN_RESET);
+		HAL_GPIO_WritePin(LCD_PORT_DC, LCD_PIN_DC, GPIO_PIN_RESET);
+		HAL_GPIO_WritePin(LCD_PORT_CS, LCD_PIN_CS, GPIO_PIN_RESET);
 		LCD_SPI_Send(0x2A);
-		HAL_GPIO_WritePin(LCD_DC_PORT, LCD_DC_PIN_R, GPIO_PIN_SET);
-		HAL_GPIO_WritePin(LCD_CS_PORT, LCD_CS_PIN_R, GPIO_PIN_SET);
+		HAL_GPIO_WritePin(LCD_PORT_DC, LCD_PIN_DC, GPIO_PIN_SET);
+		HAL_GPIO_WritePin(LCD_PORT_CS, LCD_PIN_CS, GPIO_PIN_SET);
 
 		//XDATA
-		HAL_GPIO_WritePin(LCD_CS_PORT, LCD_CS_PIN_R, GPIO_PIN_RESET);
+		HAL_GPIO_WritePin(LCD_PORT_CS, LCD_PIN_CS, GPIO_PIN_RESET);
 		tempBuffer[0] = X>>8;
 		tempBuffer[1] = X;
 		tempBuffer[2] = (X+1)>>8;
 		tempBuffer[3] = X+1;
 		HAL_SPI_Transmit(&(deviceLCD.SPI_Handle), tempBuffer, 4, 1);
-		HAL_GPIO_WritePin(LCD_CS_PORT, LCD_CS_PIN_R, GPIO_PIN_SET);
+		HAL_GPIO_WritePin(LCD_PORT_CS, LCD_PIN_CS, GPIO_PIN_SET);
 
 		//ADDRESS
-		HAL_GPIO_WritePin(LCD_DC_PORT, LCD_DC_PIN_R, GPIO_PIN_RESET);
-		HAL_GPIO_WritePin(LCD_CS_PORT, LCD_CS_PIN_R, GPIO_PIN_RESET);
+		HAL_GPIO_WritePin(LCD_PORT_DC, LCD_PIN_DC, GPIO_PIN_RESET);
+		HAL_GPIO_WritePin(LCD_PORT_CS, LCD_PIN_CS, GPIO_PIN_RESET);
 		LCD_SPI_Send(0x2B);
-		HAL_GPIO_WritePin(LCD_DC_PORT, LCD_DC_PIN_R, GPIO_PIN_SET);
-		HAL_GPIO_WritePin(LCD_CS_PORT, LCD_CS_PIN_R, GPIO_PIN_SET);
+		HAL_GPIO_WritePin(LCD_PORT_DC, LCD_PIN_DC, GPIO_PIN_SET);
+		HAL_GPIO_WritePin(LCD_PORT_CS, LCD_PIN_CS, GPIO_PIN_SET);
 
 		//YDATA
-		HAL_GPIO_WritePin(LCD_CS_PORT, LCD_CS_PIN_R, GPIO_PIN_RESET);
+		HAL_GPIO_WritePin(LCD_PORT_CS, LCD_PIN_CS, GPIO_PIN_RESET);
 		tempBuffer[0] = Y>>8;
 		tempBuffer[1] = Y;
 		tempBuffer[2] = (Y+1)>>8;
 		tempBuffer[3] = Y+1;
 		HAL_SPI_Transmit(&(deviceLCD.SPI_Handle), tempBuffer, 4, 1);
-		HAL_GPIO_WritePin(LCD_CS_PORT, LCD_CS_PIN_R, GPIO_PIN_SET);
+		HAL_GPIO_WritePin(LCD_PORT_CS, LCD_PIN_CS, GPIO_PIN_SET);
 
 		//ADDRESS
-		HAL_GPIO_WritePin(LCD_DC_PORT, LCD_DC_PIN_R, GPIO_PIN_RESET);
-		HAL_GPIO_WritePin(LCD_CS_PORT, LCD_CS_PIN_R, GPIO_PIN_RESET);
+		HAL_GPIO_WritePin(LCD_PORT_DC, LCD_PIN_DC, GPIO_PIN_RESET);
+		HAL_GPIO_WritePin(LCD_PORT_CS, LCD_PIN_CS, GPIO_PIN_RESET);
 		LCD_SPI_Send(0x2C);
-		HAL_GPIO_WritePin(LCD_DC_PORT, LCD_DC_PIN_R, GPIO_PIN_SET);
-		HAL_GPIO_WritePin(LCD_CS_PORT, LCD_CS_PIN_R, GPIO_PIN_SET);
+		HAL_GPIO_WritePin(LCD_PORT_DC, LCD_PIN_DC, GPIO_PIN_SET);
+		HAL_GPIO_WritePin(LCD_PORT_CS, LCD_PIN_CS, GPIO_PIN_SET);
 
 		//COLOUR
-		HAL_GPIO_WritePin(LCD_CS_PORT, LCD_CS_PIN_R, GPIO_PIN_RESET);
+		HAL_GPIO_WritePin(LCD_PORT_CS, LCD_PIN_CS, GPIO_PIN_RESET);
 		tempBuffer[0] = Colour>>8;
 		tempBuffer[1] = Colour;
 		HAL_SPI_Transmit(&(deviceLCD.SPI_Handle), tempBuffer, 2, 1);
-		HAL_GPIO_WritePin(LCD_CS_PORT, LCD_CS_PIN_R, GPIO_PIN_SET);
+		HAL_GPIO_WritePin(LCD_PORT_CS, LCD_PIN_CS, GPIO_PIN_SET);
 	}
 
 }
@@ -377,19 +378,19 @@ void LCD_Draw_Pixel(uint16_t X, uint16_t Y, uint16_t Colour)
 /* Send command (char) to LCD */
 void LCD_Write_Command(uint8_t Command)
 {
-	HAL_GPIO_WritePin(LCD_CS_PORT, LCD_CS_PIN_R, GPIO_PIN_RESET);
-	HAL_GPIO_WritePin(LCD_DC_PORT, LCD_DC_PIN_R, GPIO_PIN_RESET);
+	HAL_GPIO_WritePin(LCD_PORT_CS, LCD_PIN_CS, GPIO_PIN_RESET);
+	HAL_GPIO_WritePin(LCD_PORT_DC, LCD_PIN_DC, GPIO_PIN_RESET);
 	LCD_SPI_Send(Command);
-	HAL_GPIO_WritePin(LCD_CS_PORT, LCD_CS_PIN_R, GPIO_PIN_SET);
+	HAL_GPIO_WritePin(LCD_PORT_CS, LCD_PIN_CS, GPIO_PIN_SET);
 }
 
 /* Send Data (char) to LCD */
 void LCD_Write_Data(uint8_t Data)
 {
-	HAL_GPIO_WritePin(LCD_DC_PORT, LCD_DC_PIN_R, GPIO_PIN_SET);
-	HAL_GPIO_WritePin(LCD_CS_PORT, LCD_CS_PIN_R, GPIO_PIN_RESET);
+	HAL_GPIO_WritePin(LCD_PORT_DC, LCD_PIN_DC, GPIO_PIN_SET);
+	HAL_GPIO_WritePin(LCD_PORT_CS, LCD_PIN_CS, GPIO_PIN_RESET);
 	LCD_SPI_Send(Data);
-	HAL_GPIO_WritePin(LCD_CS_PORT, LCD_CS_PIN_R, GPIO_PIN_SET);
+	HAL_GPIO_WritePin(LCD_PORT_CS, LCD_PIN_CS, GPIO_PIN_SET);
 }
 
 /*Send data (char) to LCD*/
