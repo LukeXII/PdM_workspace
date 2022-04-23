@@ -40,6 +40,7 @@
 /* Private variables ---------------------------------------------------------*/
 
 FSMEvent_t newEvent;
+unsigned char mybuffer[10];
 
 /* Private function prototypes -----------------------------------------------*/
 
@@ -49,7 +50,6 @@ static void Error_Handler(void);
 /* Public functions prototypes -----------------------------------------------*/
 
 void eventGenerator(void);
-char mybuffer[10];
 
 /**
  * @brief  Main program
@@ -74,16 +74,18 @@ int main(void)
 	SystemClock_Config();
 
 	// Debug LEDs
-	BSP_LED_Init(LED2);						// Inicializacion de los LED
-	BSP_LED_Init(LED1);
+	BSP_LED_Init(LED1);						// Inicializacion de los LED
+	BSP_LED_Init(LED2);
+	BSP_LED_Init(LED3);
 
 	GPIO_Config();
 	LCD_Config();
 
 	LCD_Init();
-	FSM_Init();
+	uartinit();
+	mybuffer[0] = '\0';
 
-	//BSP_LED_On(LED2);
+	FSM_Init();
 
 	/* Infinite loop */
 	while (1)
@@ -92,27 +94,33 @@ int main(void)
 		eventGenerator();
 		FSM_Update(newEvent);				// Corre la iteracion de la FMS. Chequea si hay nuevos eventos y actualiza el estado segun corresponda
 
-		//LCD_Write_Data(0x55);
-		//HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_8);
-		//HAL_Delay(500);
-		/*
-	    if(HAL_GPIO_ReadPin(GPIOF, 12))
-	    	BSP_LED_Off(LED2);
-	    else
-	    	BSP_LED_Toggle(LED2);
-
-	    HAL_Delay(250); */
 	}
 }
 
 /* Public functions --------------------------------------------------------*/
-
 void eventGenerator(void)
 {
 	newEvent = NO_EVENT;
 
 	uartReceiveStringSize((uint8_t *)mybuffer, 10);
 
+	if(mybuffer[0] != 0)
+	{
+
+		mybuffer[strlen((const char *)mybuffer) - 1] = '\0';
+
+		if(!strcmp((const char *)mybuffer, "next"))
+		{
+			newEvent = UART_NEXT;
+		}
+		else
+			if(!strcmp((const char *)mybuffer, "prev"))
+			{
+				newEvent = UART_PREV;
+			}
+
+		mybuffer[0] = 0;
+	}
 }
 
 /**
