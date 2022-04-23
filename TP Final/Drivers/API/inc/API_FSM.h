@@ -9,6 +9,9 @@
 #define API_INC_API_FSM_H_
 
 #include <stdio.h>
+#include "stm32f4xx_nucleo_144.h" 	/* <- BSP include */
+#include "API_LCD.h"
+#include "API_uart.h"
 
 typedef enum {
 	UART_NEXT,
@@ -24,6 +27,10 @@ typedef struct tablecell_t{
 
 void FSM_Init();
 void FSM_Update(FSMEvent_t newEvent);
+
+void actionA(void);
+void actionB(void);
+void actionC(void);
 
 void no_Action(void);
 

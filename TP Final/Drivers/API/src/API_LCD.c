@@ -12,10 +12,6 @@ static LCDHandle_t deviceLCD;
 void LCD_Config(void)
 {
 
-	deviceLCD.LCDSizeX = LCD_SCREEN_WIDTH;
-	deviceLCD.LCDSizeY = LCD_SCREEN_HEIGHT;
-
-    //__SPI1_CLK_ENABLE();
     deviceLCD.SPI_Handle.Instance 				= SPI1;
     deviceLCD.SPI_Handle.Init.Mode 				= SPI_MODE_MASTER;
     deviceLCD.SPI_Handle.Init.Direction 		= SPI_DIRECTION_2LINES;
@@ -23,7 +19,7 @@ void LCD_Config(void)
     deviceLCD.SPI_Handle.Init.CLKPolarity 		= SPI_POLARITY_LOW;
     deviceLCD.SPI_Handle.Init.CLKPhase 			= SPI_PHASE_1EDGE;
     deviceLCD.SPI_Handle.Init.NSS 				= SPI_NSS_SOFT;
-    deviceLCD.SPI_Handle.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_128;
+    deviceLCD.SPI_Handle.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_4;
     deviceLCD.SPI_Handle.Init.FirstBit 			= SPI_FIRSTBIT_MSB;
     deviceLCD.SPI_Handle.Init.TIMode 			= SPI_TIMODE_DISABLED;
     deviceLCD.SPI_Handle.Init.CRCCalculation 	= SPI_CRCCALCULATION_DISABLED;
@@ -34,15 +30,14 @@ void LCD_Config(void)
     	BSP_LED_On(LED2);
     }
 
-
 }
 
 void LCD_Init(void)
 {
 
-	HAL_GPIO_WritePin(LCD_PORT_RST, LCD_PIN_RST, GPIO_PIN_SET);			// Enables LCD
+	HAL_GPIO_WritePin(LCD_PORT_RST, LCD_PIN_RST, GPIO_PIN_SET);			// Habilita el LCD
 
-	HAL_GPIO_WritePin(LCD_PORT_CS, LCD_PIN_CS, GPIO_PIN_RESET);			// CS OFF
+	HAL_GPIO_WritePin(LCD_PORT_CS, LCD_PIN_CS, GPIO_PIN_RESET);
 
 	HAL_GPIO_WritePin(LCD_PORT_RST, LCD_PIN_RST, GPIO_PIN_RESET);
 	HAL_Delay(200);
@@ -196,27 +191,21 @@ void LCD_Init(void)
 
 	LCD_Write_Command(0x00);
 
-	//STARTING ROTATION
-	LCD_Set_Rotation(SCREEN_VERTICAL_1);
+	//ORIENTACION
+	LCD_Set_Rotation(SCREEN_HORIZONTAL_2);
 
 	LCD_Fill_Screen(RED);
 
-	LCD_Draw_Pixel(150, 150, YELLOW);
-	LCD_Draw_Pixel(100, 100, CYAN);
-	LCD_Draw_Pixel(200, 200, NAVY);
-	LCD_Draw_Pixel(50, 50, WHITE);
-	LCD_Draw_Pixel(132, 203, WHITE);
 }
 
-//FILL THE ENTIRE SCREEN WITH SELECTED COLOUR (either #define-d ones or custom 16bit)
-/*Sets address (entire screen) and Sends Height*Width amount of colour information to LCD*/
+// Llena toda la pantalla con un color
 void LCD_Fill_Screen(uint16_t Colour)
 {
 	LCD_Set_Address(0, 0, deviceLCD.LCDSizeX, deviceLCD.LCDSizeY);
 	LCD_Draw_Colour_Burst(Colour, (deviceLCD.LCDSizeX)*(deviceLCD.LCDSizeY));
 }
 
-/* Set Address - Location block - to draw into */
+
 void LCD_Set_Address(uint16_t X1, uint16_t Y1, uint16_t X2, uint16_t Y2)
 {
 	LCD_Write_Command(0x2A);
@@ -234,11 +223,10 @@ void LCD_Set_Address(uint16_t X1, uint16_t Y1, uint16_t X2, uint16_t Y2)
 	LCD_Write_Command(0x2C);
 }
 
-//INTERNAL FUNCTION OF LIBRARY
-/*Sends block colour information to LCD*/
+
 void LCD_Draw_Colour_Burst(uint16_t Colour, uint32_t Size)
 {
-	//SENDS COLOUR
+
 	uint32_t Buffer_Size = 0;
 	if((Size*2) < BURST_MAX_SIZE)
 	{
@@ -272,13 +260,13 @@ void LCD_Draw_Colour_Burst(uint16_t Colour, uint32_t Size)
 			}
 	}
 
-	//REMAINDER!
+
 	HAL_SPI_Transmit(&(deviceLCD.SPI_Handle), (unsigned char *)burst_buffer, Remainder_from_block, 10);
 
 	HAL_GPIO_WritePin(LCD_PORT_CS, LCD_PIN_CS, GPIO_PIN_SET);
 }
 
-/*Set rotation of the screen - changes x0 and y0*/
+
 void LCD_Set_Rotation(uint8_t Rotation)
 {
 
@@ -310,30 +298,254 @@ void LCD_Set_Rotation(uint8_t Rotation)
 			deviceLCD.LCDSizeY = 240;
 			break;
 		default:
-			//EXIT IF SCREEN ROTATION NOT VALID!
+			// Sale si la orientacion no es valida
 			break;
 	}
 }
 
-//DRAW PIXEL AT XY POSITION WITH SELECTED COLOUR
-//
-//Location is dependant on screen orientation. x0 and y0 locations change with orientations.
-//Using pixels to draw big simple structures is not recommended as it is really slow
-//Try using either rectangles or lines if possible
-//
+
+void LCD_Draw_Hollow_Circle(uint16_t X, uint16_t Y, uint16_t Radius, uint16_t Colour)
+{
+	int x = Radius-1;
+    int y = 0;
+    int dx = 1;
+    int dy = 1;
+    int err = dx - (Radius << 1);
+
+    while (x >= y)
+    {
+    	LCD_Draw_Pixel(X + x, Y + y, Colour);
+        LCD_Draw_Pixel(X + y, Y + x, Colour);
+        LCD_Draw_Pixel(X - y, Y + x, Colour);
+        LCD_Draw_Pixel(X - x, Y + y, Colour);
+        LCD_Draw_Pixel(X - x, Y - y, Colour);
+        LCD_Draw_Pixel(X - y, Y - x, Colour);
+        LCD_Draw_Pixel(X + y, Y - x, Colour);
+        LCD_Draw_Pixel(X + x, Y - y, Colour);
+
+        if (err <= 0)
+        {
+            y++;
+            err += dy;
+            dy += 2;
+        }
+        if (err > 0)
+        {
+            x--;
+            dx += 2;
+            err += (-Radius << 1) + dx;
+        }
+    }
+}
+
+
+void LCD_Draw_Filled_Circle(uint16_t X, uint16_t Y, uint16_t Radius, uint16_t Colour)
+{
+
+	int x = Radius;
+    int y = 0;
+    int xChange = 1 - (Radius << 1);
+    int yChange = 0;
+    int radiusError = 0;
+
+    while (x >= y)
+    {
+        for (int i = X - x; i <= X + x; i++)
+        {
+            LCD_Draw_Pixel(i, Y + y,Colour);
+            LCD_Draw_Pixel(i, Y - y,Colour);
+        }
+        for (int i = X - y; i <= X + y; i++)
+        {
+            LCD_Draw_Pixel(i, Y + x,Colour);
+            LCD_Draw_Pixel(i, Y - x,Colour);
+        }
+
+        y++;
+        radiusError += yChange;
+        yChange += 2;
+        if (((radiusError << 1) + xChange) > 0)
+        {
+            x--;
+            radiusError += xChange;
+            xChange += 2;
+        }
+    }
+
+}
+
+
+void LCD_Draw_Hollow_Rectangle_Coord(uint16_t X0, uint16_t Y0, uint16_t X1, uint16_t Y1, uint16_t Colour)
+{
+	uint16_t X_length = 0;
+	uint16_t Y_length = 0;
+	uint8_t	Negative_X = 0;
+	uint8_t Negative_Y = 0;
+	float Calc_Negative = 0;
+
+	Calc_Negative = X1 - X0;
+	if(Calc_Negative < 0) Negative_X = 1;
+	Calc_Negative = 0;
+
+	Calc_Negative = Y1 - Y0;
+	if(Calc_Negative < 0) Negative_Y = 1;
+
+	if(!Negative_X)
+		X_length = X1 - X0;
+	else
+		X_length = X0 - X1;
+
+	LCD_Draw_Horizontal_Line(X0, Y0, X_length, Colour);
+	LCD_Draw_Horizontal_Line(X0, Y1, X_length, Colour);
+
+	if(!Negative_Y)
+		Y_length = Y1 - Y0;
+	else
+		Y_length = Y0 - Y1;
+	LCD_Draw_Vertical_Line(X0, Y0, Y_length, Colour);
+	LCD_Draw_Vertical_Line(X1, Y0, Y_length, Colour);
+
+	if((X_length > 0)||(Y_length > 0))
+		LCD_Draw_Pixel(X1, Y1, Colour);
+
+}
+
+
+void LCD_Draw_Filled_Rectangle_Coord(uint16_t X0, uint16_t Y0, uint16_t X1, uint16_t Y1, uint16_t Colour)
+{
+	uint16_t X_length = 0;
+	uint16_t Y_length = 0;
+	uint8_t	Negative_X = 0;
+	uint8_t Negative_Y = 0;
+	int32_t Calc_Negative = 0;
+
+	uint16_t X0_true = 0;
+	uint16_t Y0_true = 0;
+
+	Calc_Negative = X1 - X0;
+	if(Calc_Negative < 0) Negative_X = 1;
+	Calc_Negative = 0;
+
+	Calc_Negative = Y1 - Y0;
+	if(Calc_Negative < 0) Negative_Y = 1;
+
+	if(!Negative_X)
+	{
+		X_length = X1 - X0;
+		X0_true = X0;
+	}
+	else
+	{
+		X_length = X0 - X1;
+		X0_true = X1;
+	}
+
+	if(!Negative_Y)
+	{
+		Y_length = Y1 - Y0;
+		Y0_true = Y0;
+	}
+	else
+	{
+		Y_length = Y0 - Y1;
+		Y0_true = Y1;
+	}
+
+	LCD_Draw_Rectangle(X0_true, Y0_true, X_length, Y_length, Colour);
+}
+
+
+void LCD_Draw_Char(char Character, uint16_t X, uint16_t Y, uint16_t Colour, uint16_t Size, uint16_t Background_Colour)
+{
+	uint8_t function_char;
+    uint8_t	i,j;
+	char temp[CHAR_WIDTH];
+
+	function_char = Character;
+
+    if (function_char < ' ')
+    	Character = 0;
+    else
+    {
+    	function_char -= 32;
+    }
+
+	for(uint8_t k = 0; k<CHAR_WIDTH; k++)
+			temp[k] = font[function_char][k];
+
+	LCD_Draw_Rectangle(X, Y, CHAR_WIDTH*Size, CHAR_HEIGHT*Size, Background_Colour);
+    for (j=0; j<CHAR_WIDTH; j++) {
+        for (i=0; i<CHAR_HEIGHT; i++) {
+            if (temp[j] & (1<<i)) {
+				if(Size == 1)
+					LCD_Draw_Pixel(X+j, Y+i, Colour);
+				else
+					LCD_Draw_Rectangle(X+(j*Size), Y+(i*Size), Size, Size, Colour);
+            }
+        }
+    }
+}
+
+
+void LCD_Draw_Text(const char* Text, uint16_t X, uint16_t Y, uint16_t Colour, uint16_t Size, uint16_t Background_Colour)
+{
+    while (*Text)
+    {
+        LCD_Draw_Char(*Text++, X, Y, Colour, Size, Background_Colour);
+        X += CHAR_WIDTH*Size;
+    }
+}
+
+void LCD_Draw_Rectangle(uint16_t X, uint16_t Y, uint16_t Width, uint16_t Height, uint16_t Colour)
+{
+	if((X >=deviceLCD.LCDSizeX) || (Y >= deviceLCD.LCDSizeY)) return;
+	if((X+Width-1)>=deviceLCD.LCDSizeX)
+		{
+			Width=deviceLCD.LCDSizeX-X;
+		}
+	if((Y+Height-1)>=deviceLCD.LCDSizeY)
+		{
+			Height=deviceLCD.LCDSizeY-Y;
+		}
+	LCD_Set_Address(X, Y, X+Width-1, Y+Height-1);
+	LCD_Draw_Colour_Burst(Colour, Height*Width);
+}
+
+
+void LCD_Draw_Horizontal_Line(uint16_t X, uint16_t Y, uint16_t Width, uint16_t Colour)
+{
+	if((X >= deviceLCD.LCDSizeX) || (Y >= deviceLCD.LCDSizeY)) return;
+	if((X+Width-1)>=deviceLCD.LCDSizeX)
+		Width=deviceLCD.LCDSizeX-X;
+
+	LCD_Set_Address(X, Y, X+Width-1, Y);
+	LCD_Draw_Colour_Burst(Colour, Width);
+}
+
+
+void LCD_Draw_Vertical_Line(uint16_t X, uint16_t Y, uint16_t Height, uint16_t Colour)
+{
+	if((X >= deviceLCD.LCDSizeX) || (Y >= deviceLCD.LCDSizeY)) return;
+	if((Y+Height-1)>=deviceLCD.LCDSizeY)
+		Height=deviceLCD.LCDSizeY-Y;
+
+	LCD_Set_Address(X, Y, X, Y+Height-1);
+	LCD_Draw_Colour_Burst(Colour, Height);
+}
+
+// Dibuja un pixel en la posicion indicada
 void LCD_Draw_Pixel(uint16_t X, uint16_t Y, uint16_t Colour)
 {
 	if((X < deviceLCD.LCDSizeX) && (Y < deviceLCD.LCDSizeY))			//Verifica que la posicion este dentro de los limites de la pantalla
 	{
 		unsigned char tempBuffer[4];
-		//ADDRESS
+
 		HAL_GPIO_WritePin(LCD_PORT_DC, LCD_PIN_DC, GPIO_PIN_RESET);
 		HAL_GPIO_WritePin(LCD_PORT_CS, LCD_PIN_CS, GPIO_PIN_RESET);
 		LCD_SPI_Send(0x2A);
 		HAL_GPIO_WritePin(LCD_PORT_DC, LCD_PIN_DC, GPIO_PIN_SET);
 		HAL_GPIO_WritePin(LCD_PORT_CS, LCD_PIN_CS, GPIO_PIN_SET);
 
-		//XDATA
 		HAL_GPIO_WritePin(LCD_PORT_CS, LCD_PIN_CS, GPIO_PIN_RESET);
 		tempBuffer[0] = X>>8;
 		tempBuffer[1] = X;
@@ -342,14 +554,12 @@ void LCD_Draw_Pixel(uint16_t X, uint16_t Y, uint16_t Colour)
 		HAL_SPI_Transmit(&(deviceLCD.SPI_Handle), tempBuffer, 4, 1);
 		HAL_GPIO_WritePin(LCD_PORT_CS, LCD_PIN_CS, GPIO_PIN_SET);
 
-		//ADDRESS
 		HAL_GPIO_WritePin(LCD_PORT_DC, LCD_PIN_DC, GPIO_PIN_RESET);
 		HAL_GPIO_WritePin(LCD_PORT_CS, LCD_PIN_CS, GPIO_PIN_RESET);
 		LCD_SPI_Send(0x2B);
 		HAL_GPIO_WritePin(LCD_PORT_DC, LCD_PIN_DC, GPIO_PIN_SET);
 		HAL_GPIO_WritePin(LCD_PORT_CS, LCD_PIN_CS, GPIO_PIN_SET);
 
-		//YDATA
 		HAL_GPIO_WritePin(LCD_PORT_CS, LCD_PIN_CS, GPIO_PIN_RESET);
 		tempBuffer[0] = Y>>8;
 		tempBuffer[1] = Y;
@@ -358,14 +568,12 @@ void LCD_Draw_Pixel(uint16_t X, uint16_t Y, uint16_t Colour)
 		HAL_SPI_Transmit(&(deviceLCD.SPI_Handle), tempBuffer, 4, 1);
 		HAL_GPIO_WritePin(LCD_PORT_CS, LCD_PIN_CS, GPIO_PIN_SET);
 
-		//ADDRESS
 		HAL_GPIO_WritePin(LCD_PORT_DC, LCD_PIN_DC, GPIO_PIN_RESET);
 		HAL_GPIO_WritePin(LCD_PORT_CS, LCD_PIN_CS, GPIO_PIN_RESET);
 		LCD_SPI_Send(0x2C);
 		HAL_GPIO_WritePin(LCD_PORT_DC, LCD_PIN_DC, GPIO_PIN_SET);
 		HAL_GPIO_WritePin(LCD_PORT_CS, LCD_PIN_CS, GPIO_PIN_SET);
 
-		//COLOUR
 		HAL_GPIO_WritePin(LCD_PORT_CS, LCD_PIN_CS, GPIO_PIN_RESET);
 		tempBuffer[0] = Colour>>8;
 		tempBuffer[1] = Colour;
@@ -375,16 +583,16 @@ void LCD_Draw_Pixel(uint16_t X, uint16_t Y, uint16_t Colour)
 
 }
 
-/* Send command (char) to LCD */
+/* Envia un comando (char) al LCD */
 void LCD_Write_Command(uint8_t Command)
 {
-	HAL_GPIO_WritePin(LCD_PORT_CS, LCD_PIN_CS, GPIO_PIN_RESET);
+	HAL_GPIO_WritePin(LCD_PORT_CS, LCD_PIN_CS, GPIO_PIN_RESET);		// Pone la señal CS (chip select) del SPI en bajo antes de mandar el comando. La vuelve a poner en alto cuando termina.
 	HAL_GPIO_WritePin(LCD_PORT_DC, LCD_PIN_DC, GPIO_PIN_RESET);
 	LCD_SPI_Send(Command);
 	HAL_GPIO_WritePin(LCD_PORT_CS, LCD_PIN_CS, GPIO_PIN_SET);
 }
 
-/* Send Data (char) to LCD */
+/* Envia un dato (char) al LCD */
 void LCD_Write_Data(uint8_t Data)
 {
 	HAL_GPIO_WritePin(LCD_PORT_DC, LCD_PIN_DC, GPIO_PIN_SET);
@@ -393,14 +601,13 @@ void LCD_Write_Data(uint8_t Data)
 	HAL_GPIO_WritePin(LCD_PORT_CS, LCD_PIN_CS, GPIO_PIN_SET);
 }
 
-/*Send data (char) to LCD*/
+/* Reliza la transmision al LCD mediante el SPI */
 void LCD_SPI_Send(unsigned char SPI_Data)
 {
 	HAL_SPI_Transmit(&(deviceLCD.SPI_Handle), &SPI_Data, 1, 1);
 }
 
 /*
-
 
 void LCD_Error_Handler(void)
 {
