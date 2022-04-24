@@ -242,11 +242,12 @@ void LCD_Draw_Colour_Burst(uint16_t Colour, uint32_t Size)
 
 	unsigned char chifted = 	Colour>>8;;
 	unsigned char burst_buffer[Buffer_Size];
+
 	for(uint32_t j = 0; j < Buffer_Size; j+=2)
-		{
-			burst_buffer[j] = 	chifted;
-			burst_buffer[j+1] = Colour;
-		}
+	{
+		burst_buffer[j] = 	chifted;
+		burst_buffer[j+1] = Colour;
+	}
 
 	uint32_t Sending_Size = Size*2;
 	uint32_t Sending_in_Block = Sending_Size/Buffer_Size;
@@ -255,9 +256,9 @@ void LCD_Draw_Colour_Burst(uint16_t Colour, uint32_t Size)
 	if(Sending_in_Block != 0)
 	{
 		for(uint32_t j = 0; j < (Sending_in_Block); j++)
-			{
+		{
 			HAL_SPI_Transmit(&(deviceLCD.SPI_Handle), (unsigned char *)burst_buffer, Buffer_Size, 10);
-			}
+		}
 	}
 
 
@@ -269,7 +270,6 @@ void LCD_Draw_Colour_Burst(uint16_t Colour, uint32_t Size)
 
 void LCD_Set_Rotation(uint8_t Rotation)
 {
-
 	uint8_t screen_rotation = Rotation;
 
 	LCD_Write_Command(0x36);
@@ -284,17 +284,17 @@ void LCD_Set_Rotation(uint8_t Rotation)
 			break;
 		case SCREEN_HORIZONTAL_1:
 			LCD_Write_Data(0x20|0x08);
-			deviceLCD.LCDSizeX  = 320;
+			deviceLCD.LCDSizeX = 320;
 			deviceLCD.LCDSizeY = 240;
 			break;
 		case SCREEN_VERTICAL_2:
 			LCD_Write_Data(0x80|0x08);
-			deviceLCD.LCDSizeX  = 240;
+			deviceLCD.LCDSizeX = 240;
 			deviceLCD.LCDSizeY = 320;
 			break;
 		case SCREEN_HORIZONTAL_2:
 			LCD_Write_Data(0x40|0x80|0x20|0x08);
-			deviceLCD.LCDSizeX  = 320;
+			deviceLCD.LCDSizeX = 320;
 			deviceLCD.LCDSizeY = 240;
 			break;
 		default:
@@ -423,11 +423,16 @@ void LCD_Draw_Filled_Rectangle_Coord(uint16_t X0, uint16_t Y0, uint16_t X1, uint
 	uint16_t Y0_true = 0;
 
 	Calc_Negative = X1 - X0;
-	if(Calc_Negative < 0) Negative_X = 1;
+
+	if(Calc_Negative < 0)
+		Negative_X = 1;
+
 	Calc_Negative = 0;
 
 	Calc_Negative = Y1 - Y0;
-	if(Calc_Negative < 0) Negative_Y = 1;
+
+	if(Calc_Negative < 0)
+		Negative_Y = 1;
 
 	if(!Negative_X)
 	{
@@ -474,6 +479,7 @@ void LCD_Draw_Char(char Character, uint16_t X, uint16_t Y, uint16_t Colour, uint
 			temp[k] = font[function_char][k];
 
 	LCD_Draw_Rectangle(X, Y, CHAR_WIDTH*Size, CHAR_HEIGHT*Size, Background_Colour);
+
     for (j=0; j<CHAR_WIDTH; j++) {
         for (i=0; i<CHAR_HEIGHT; i++) {
             if (temp[j] & (1<<i)) {
@@ -498,15 +504,18 @@ void LCD_Draw_Text(const char* Text, uint16_t X, uint16_t Y, uint16_t Colour, ui
 
 void LCD_Draw_Rectangle(uint16_t X, uint16_t Y, uint16_t Width, uint16_t Height, uint16_t Colour)
 {
-	if((X >=deviceLCD.LCDSizeX) || (Y >= deviceLCD.LCDSizeY)) return;
-	if((X+Width-1)>=deviceLCD.LCDSizeX)
-		{
-			Width=deviceLCD.LCDSizeX-X;
-		}
-	if((Y+Height-1)>=deviceLCD.LCDSizeY)
-		{
-			Height=deviceLCD.LCDSizeY-Y;
-		}
+	if((X >=deviceLCD.LCDSizeX) || (Y >= deviceLCD.LCDSizeY))
+		return;
+
+	if((X+Width-1) >= deviceLCD.LCDSizeX)
+	{
+		Width = deviceLCD.LCDSizeX-X;
+	}
+	if((Y+Height-1) >= deviceLCD.LCDSizeY)
+	{
+		Height = deviceLCD.LCDSizeY-Y;
+	}
+
 	LCD_Set_Address(X, Y, X+Width-1, Y+Height-1);
 	LCD_Draw_Colour_Burst(Colour, Height*Width);
 }
@@ -514,9 +523,11 @@ void LCD_Draw_Rectangle(uint16_t X, uint16_t Y, uint16_t Width, uint16_t Height,
 
 void LCD_Draw_Horizontal_Line(uint16_t X, uint16_t Y, uint16_t Width, uint16_t Colour)
 {
-	if((X >= deviceLCD.LCDSizeX) || (Y >= deviceLCD.LCDSizeY)) return;
-	if((X+Width-1)>=deviceLCD.LCDSizeX)
-		Width=deviceLCD.LCDSizeX-X;
+	if((X >= deviceLCD.LCDSizeX) || (Y >= deviceLCD.LCDSizeY))
+		return;
+
+	if((X+Width-1) >= deviceLCD.LCDSizeX)
+		Width = deviceLCD.LCDSizeX-X;
 
 	LCD_Set_Address(X, Y, X+Width-1, Y);
 	LCD_Draw_Colour_Burst(Colour, Width);
@@ -525,9 +536,11 @@ void LCD_Draw_Horizontal_Line(uint16_t X, uint16_t Y, uint16_t Width, uint16_t C
 
 void LCD_Draw_Vertical_Line(uint16_t X, uint16_t Y, uint16_t Height, uint16_t Colour)
 {
-	if((X >= deviceLCD.LCDSizeX) || (Y >= deviceLCD.LCDSizeY)) return;
+	if((X >= deviceLCD.LCDSizeX) || (Y >= deviceLCD.LCDSizeY))
+		return;
+
 	if((Y+Height-1)>=deviceLCD.LCDSizeY)
-		Height=deviceLCD.LCDSizeY-Y;
+		Height = deviceLCD.LCDSizeY-Y;
 
 	LCD_Set_Address(X, Y, X, Y+Height-1);
 	LCD_Draw_Colour_Burst(Colour, Height);
@@ -542,40 +555,34 @@ void LCD_Draw_Pixel(uint16_t X, uint16_t Y, uint16_t Colour)
 
 		LCD_Write_Command(0x2A);
 
-		HAL_GPIO_WritePin(LCD_PORT_DC, LCD_PIN_DC, GPIO_PIN_SET);
-
 		tempBuffer[0] = X>>8;
 		tempBuffer[1] = X;
 		tempBuffer[2] = (X+1)>>8;
 		tempBuffer[3] = X+1;
 
+		HAL_GPIO_WritePin(LCD_PORT_DC, LCD_PIN_DC, GPIO_PIN_SET);
 		HAL_GPIO_WritePin(LCD_PORT_CS, LCD_PIN_CS, GPIO_PIN_RESET);
 		HAL_SPI_Transmit(&(deviceLCD.SPI_Handle), tempBuffer, 4, 1);
 		HAL_GPIO_WritePin(LCD_PORT_CS, LCD_PIN_CS, GPIO_PIN_SET);
 
-		HAL_GPIO_WritePin(LCD_PORT_DC, LCD_PIN_DC, GPIO_PIN_RESET);
-		HAL_GPIO_WritePin(LCD_PORT_CS, LCD_PIN_CS, GPIO_PIN_RESET);
-		LCD_SPI_Send(0x2B);
-		HAL_GPIO_WritePin(LCD_PORT_DC, LCD_PIN_DC, GPIO_PIN_SET);
-		HAL_GPIO_WritePin(LCD_PORT_CS, LCD_PIN_CS, GPIO_PIN_SET);
+		LCD_Write_Command(0x2B);
 
 		tempBuffer[0] = Y>>8;
 		tempBuffer[1] = Y;
 		tempBuffer[2] = (Y+1)>>8;
 		tempBuffer[3] = Y+1;
 
+		HAL_GPIO_WritePin(LCD_PORT_DC, LCD_PIN_DC, GPIO_PIN_SET);
 		HAL_GPIO_WritePin(LCD_PORT_CS, LCD_PIN_CS, GPIO_PIN_RESET);
 		HAL_SPI_Transmit(&(deviceLCD.SPI_Handle), tempBuffer, 4, 1);
 		HAL_GPIO_WritePin(LCD_PORT_CS, LCD_PIN_CS, GPIO_PIN_SET);
 
-		HAL_GPIO_WritePin(LCD_PORT_DC, LCD_PIN_DC, GPIO_PIN_RESET);
-		HAL_GPIO_WritePin(LCD_PORT_CS, LCD_PIN_CS, GPIO_PIN_RESET);
-		LCD_SPI_Send(0x2C);
-		HAL_GPIO_WritePin(LCD_PORT_DC, LCD_PIN_DC, GPIO_PIN_SET);
-		HAL_GPIO_WritePin(LCD_PORT_CS, LCD_PIN_CS, GPIO_PIN_SET);
+		LCD_Write_Command(0x2C);
 
 		tempBuffer[0] = Colour>>8;
 		tempBuffer[1] = Colour;
+
+		HAL_GPIO_WritePin(LCD_PORT_DC, LCD_PIN_DC, GPIO_PIN_SET);
 		HAL_GPIO_WritePin(LCD_PORT_CS, LCD_PIN_CS, GPIO_PIN_RESET);
 		HAL_SPI_Transmit(&(deviceLCD.SPI_Handle), tempBuffer, 2, 1);
 		HAL_GPIO_WritePin(LCD_PORT_CS, LCD_PIN_CS, GPIO_PIN_SET);
