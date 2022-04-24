@@ -7,8 +7,8 @@
 
 #include "API_uart.h"
 
-#define DEFAULT_TIMEOUT	30
-#define DEFAULT_BAUDRATE 9600
+#define DEFAULT_TIMEOUT		30
+#define DEFAULT_BAUDRATE 	9600
 
 static const char * BAUDRATE = "Baudrate: 9600\r\n";
 static const char * WORD_LENGTH = "Word length: 8 bits\r\n";
