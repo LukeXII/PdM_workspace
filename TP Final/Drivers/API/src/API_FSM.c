@@ -32,7 +32,7 @@ void FSM_Update(FSMEvent_t newEvent)
 
 void no_Action(void)
 {
-
+	LCD_Fill_Screen(RED);
 }
 
 void actionA(void)
